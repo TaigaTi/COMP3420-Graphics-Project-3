@@ -10,18 +10,25 @@
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <cstdlib>
 #include <iostream>
+
+#include "camera.h"
 
 using namespace std;
 
 
-// ADD GLOBAL VARIABLES HERE
+// Display Window
 GLFWwindow* window;
+GLuint sWidth = 1000, sHeight = 800;
 
+// Camera
+Camera camera(glm::vec3(0, 0, 0));
 
-int main(int argc, char* argv[])
-{
+void init() {
     // Initialize the resources - set window, etc.
     if (!glfwInit())
     {
@@ -31,10 +38,10 @@ int main(int argc, char* argv[])
 
 
     // Create the display window
-    window = glfwCreateWindow(640, 480, "Bowling Alley", NULL, NULL);
+    window = glfwCreateWindow(sWidth, sHeight, "Bowling Alley", NULL, NULL);
 
 
-    //If window fails creation, then shut down the whole thing
+    // If window fails creation, then shut down the whole thing
     if (!window)
     {
         cout << "\nFailed to open display window...";
@@ -42,8 +49,7 @@ int main(int argc, char* argv[])
         exit(EXIT_FAILURE);
     }
 
-
-    //If window succeeded then make it active on the display device
+    // If window succeeded then make it active on the display device
     glfwMakeContextCurrent(window);
 
 
@@ -57,17 +63,15 @@ int main(int argc, char* argv[])
         cout << "\nFailed to initialize GLEW...";
         exit(EXIT_FAILURE);
     }
+}
 
+int main(int argc, char* argv[])
+{
+    // Initialize resources
+    init();
+    
 
-    //==========================================================================//
-    // At this stage... All systems are OK, proceed with window and view setup   //
-    //==========================================================================//
-
-    //Set the window's background colour (to RED)
-    glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
-
-
-    //Keep displaying the window until we have shut it down
+    // Keep displaying the window until we have shut it down
     while (!glfwWindowShouldClose(window))
     {
         glClear(GL_COLOR_BUFFER_BIT);       // Flush the color buffer
@@ -76,10 +80,10 @@ int main(int argc, char* argv[])
     }
 
 
-    //Close the display window
+    // Close the display window
     glfwDestroyWindow(window);
 
-    //Release ALL the other resources
+    // Release ALL the other resources
     glfwTerminate();
 
     // Shut down the program gracefully
