@@ -80,6 +80,10 @@ void init() {
 
 	// Depth Test
 	glEnable(GL_DEPTH_TEST);
+
+	// Set viewport size
+	// This makes the bottom left be 0, 0
+	glViewport(0, 0, sWidth, sHeight);
 }
 
 int main(int argc, char* argv[])
