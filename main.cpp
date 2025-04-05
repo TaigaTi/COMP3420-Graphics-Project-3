@@ -45,6 +45,11 @@ void init() {
 		exit(EXIT_FAILURE);
 	}
 
+	// Set the configuration info
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
 
 	// Create the display window
 	window = glfwCreateWindow(sWidth, sHeight, "Bowling skybox", NULL, NULL);
