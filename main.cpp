@@ -300,4 +300,6 @@ GLuint loadCubeMap(std::vector<std::string> faces)
 void processInput(GLFWwindow* window)
 {
 	// We can handle input in here
+	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, true);
 }
