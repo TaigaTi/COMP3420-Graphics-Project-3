@@ -1,7 +1,7 @@
 # 3ds Max Wavefront OBJ Exporter v0.97b - (c)2007 guruware
 # File Created: 19.04.2011 11:08:01
 
-newmtl 01___Default
+newmtl Material.001
 	Ns 10.0000
 	Ni 1.5000
 	d 1.0000
@@ -12,5 +12,5 @@ newmtl 01___Default
 	Kd 0.5882 0.5882 0.5882
 	Ks 0.0000 0.0000 0.0000
 	Ke 0.0000 0.0000 0.0000
-	map_Ka 10491_Bowling-Ball_v1_diffues.jpg
-	map_Kd 10491_Bowling-Ball_v1_diffues.jpg
+	map_Ka bowling_ball.jpg
+	map_Kd bowling_ball.jpg

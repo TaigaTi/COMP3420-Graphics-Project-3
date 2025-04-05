@@ -31,6 +31,9 @@ GLuint sWidth = 1920, sHeight = 1080;
 // Camera
 Camera camera(glm::vec3(0.0f, 200.0f, 1700.0f));
 
+// Ball Angle
+GLfloat ballAngle = 0.0;
+
 void init() {
 	// Initialize the resources - set window, etc.
 	if (!glfwInit())
@@ -66,6 +69,9 @@ void init() {
 		cout << "\nFailed to initialize GLEW...";
 		exit(EXIT_FAILURE);
 	}
+
+	// Depth Test
+	glEnable(GL_DEPTH_TEST);
 }
 
 int main(int argc, char* argv[])
@@ -91,8 +97,8 @@ int main(int argc, char* argv[])
 	// Keep displaying the window until we have shut it down
 	while (!glfwWindowShouldClose(window))
 	{
-		glClear(GL_COLOR_BUFFER_BIT);       // Flush the color buffer
-		glfwPollEvents();                   // Listen for other events
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);			// Flush the color buffer
+		glfwPollEvents();											// Listen for other events
 	
 		// Create the view matrix
 		ballShader.Use();
@@ -104,9 +110,14 @@ int main(int argc, char* argv[])
 
 		ballModel = glm::scale(ballModel, glm::vec3(20.0f));
 		ballModel = glm::translate(ballModel, glm::vec3(0.0f, 0.0f, 0.0f));
+
+		ballAngle += 0.001;
+		ballModel = glm::rotate(ballModel, ballAngle, glm::vec3(1.0f, 1.0f, 1.0f));
+
 		
-		// Pass the Model matrix to the shader as "model"
+		// Pass the model matrix to the shader as "model"
 		glUniformMatrix4fv(glGetUniformLocation(ballShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(ballModel));
+		glUniform1i(glGetUniformLocation(ballShader.Program, "texture_diffuse1"), 0);
 	
 		// Draw the object
 		bowlingBall.Draw(ballShader);
