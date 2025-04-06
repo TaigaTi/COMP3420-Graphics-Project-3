@@ -35,6 +35,29 @@ GLuint loadCubeMap(vector<std::string>);
 
 // Camera
 Camera camera(glm::vec3(0.0f, 200.0f, 1000.0f));
+// Process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
+
+bool firstMouse = true;
+float lastX = sWidth / 2.0f;
+float lastY = sHeight / 2.0f;
+
+void camera_view_callback(GLFWwindow* window, double xpos, double ypos)
+{
+	if (firstMouse)
+	{
+		lastX = xpos;
+		lastY = ypos;
+		firstMouse = false;
+	}
+
+	float xoffset = xpos - lastX;
+	float yoffset = lastY - ypos;
+
+	lastX = xpos;
+	lastY = ypos;
+	camera.ProcessMouseMovement(xoffset, yoffset);
+};
+
 
 // Ball Angle
 GLfloat ballAngle = 0.0;
@@ -92,6 +115,10 @@ int main(int argc, char* argv[])
 {
 	// Initialize resources
 	init();
+
+	//Camera movement via mouse callback set
+	glfwSetCursorPosCallback(window, camera_view_callback);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	// Setup and compile shaders
 	Shader ballShader("ballVertexShader.glsl", "ballFragmentShader.glsl");
