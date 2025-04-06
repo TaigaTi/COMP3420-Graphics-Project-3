@@ -40,8 +40,10 @@ GLuint loadCubeMap(vector<std::string>);
 Camera camera(glm::vec3(0.0f, 1000.0f, 1500.0f)); 
 // Process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 
-// Ball position
-const float SCALE = 25.0f;
+// Ball INFO
+const float BALL_SCALE = 25.0f;
+const float BALL_BASE_SPEED = 29.0f;
+bool isRolling = false;
 glm::vec3 ballPosition = glm::vec3(0.0f, 0.0f, 0.0f);
 
 // Movement flags and speed
@@ -69,15 +71,15 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 void do_movement(Ball* ball)
 {
 	/// Ball movement
-	float ballSpeed = 29.0f * deltaTime;
+	float ballSpeed = getBallSpeed();
 
 	if (keys[GLFW_KEY_UP]) {
 		//ballPosition.z -= ballSpeed;
-		ball->move(0, -1, deltaTime);
+		isRolling = true;
 	}
 	if (keys[GLFW_KEY_DOWN]) {
-		ball->move(0, 1, deltaTime);
 		//ballPosition.z += ballSpeed;
+		isRolling = false;
 	}
 	if (keys[GLFW_KEY_LEFT]) {
 		ball->move(-1, 0, deltaTime);
@@ -297,6 +299,7 @@ int main(int argc, char* argv[])
 		lastFrame = currentFrame;
 
 		processInput(window);		
+			// Flush the color buffer
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		do_movement(&ball);// Input Processing
 		//cout << "Ball Pos: (" << ballPosition.x << ", " << ballPosition.z << ") | "
