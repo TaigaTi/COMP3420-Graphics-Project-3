@@ -39,6 +39,8 @@ class Model
             string directory;
             bool gammaCorrection;
 
+            Model() = default;
+
             // Constructor, expects a filepath to a 3D model.
             Model(GLchar* path, bool gamma = false) : gammaCorrection(gamma)
                 {

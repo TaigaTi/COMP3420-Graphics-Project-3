@@ -19,6 +19,7 @@
 #include "camera.h"
 #include "shader.h"
 #include "model.h"
+#include "ball.h"
 
 using namespace std;
 
