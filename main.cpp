@@ -34,7 +34,7 @@ GLfloat aspectRatio = (float)sWidth / (float)sHeight;
 GLuint loadCubeMap(vector<std::string>);
 
 // Camera
-Camera camera(glm::vec3(0.0f, 200.0f, 5000.0f));
+Camera camera(glm::vec3(0.0f, 200.0f, 1000.0f));
 
 // Ball Angle
 GLfloat ballAngle = 0.0;
@@ -97,9 +97,13 @@ int main(int argc, char* argv[])
 	Shader ballShader("ballVertexShader.glsl", "ballFragmentShader.glsl");
 	Shader skyboxShader("skyboxVertexShader.glsl", "skyboxFragmentShader.glsl");
 	Shader cubeShader("cubeMapVertexShader.glsl", "cubeMapFragmentShader.glsl");
+	Shader bowlingPinsShader("bowlingPinsVertexShader.glsl", "bowlingPinsFragmentShader.glsl");
+	Shader platformShader("platformVertexShader.glsl", "platformFragmentShader.glsl");
 
 	// Load the bowling ball model object
 	Model bowlingBall((GLchar*)"bowling_ball.obj");
+	Model platform((GLchar*)"platform.obj");
+	Model bowlingPins((GLchar*)"High Poly.obj");
 
 	// Define bowling skybox vertices
 	GLfloat skyboxVertices[] =
@@ -148,7 +152,9 @@ int main(int argc, char* argv[])
 		 1.0f, -1.0f,  1.0f
 	};
 
-	// Setup skybox VAO
+	// =======================================================================
+	//  Setup skybox VAO
+	// =======================================================================
 	GLuint skyboxVAO, skyboxVBO;
 
 	glGenVertexArrays(1, &skyboxVAO);
@@ -162,7 +168,7 @@ int main(int argc, char* argv[])
 
 	glBindVertexArray(0);
 
-	// Gather images for cubemap for the skybox and load them in
+	// Gather images for cube map for the skybox and load them in
 	std::vector<std::string> faces;
 	faces.push_back("right.jpg");
 	faces.push_back("left.jpg");
@@ -174,23 +180,30 @@ int main(int argc, char* argv[])
 	GLuint skyboxTexture = loadCubeMap(faces);
 
 
-	// Creating the projection matrix
-	glm::mat4 projection = glm::perspective(45.0f, (GLfloat)sWidth / (GLfloat)sHeight, 1.0f, 10000.0f);
+	// =======================================================================
+	//  Create the projection matrix
+	// =======================================================================
+	glm::mat4 projection = glm::perspective(45.0f, (GLfloat)sWidth / (GLfloat)sHeight, 0.1f, 10000.0f);
 	ballShader.Use();
 	glUniformMatrix4fv(glGetUniformLocation(ballShader.Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+	platformShader.Use();
+	glUniformMatrix4fv(glGetUniformLocation(platformShader.Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
 
 	// Keep displaying the window until we have shut it down
 	while (!glfwWindowShouldClose(window))
 	{
-		processInput(window); // Input Processing
+		processInput(window);										// Input Processing
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);			// Flush the color buffer
 	
-		// Set up the scene
+		// =======================================================================
+		//  Setup the scene
+		// =======================================================================
 		cubeShader.Use();
-		glm::mat4 model = glm::translate(model, glm::vec3(0.0f, 0.0f, -1000.0f));
+		glm::mat4 model = glm::mat4(1.0f); // Start with clean matrix
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -1000.0f));
 		glm::mat4 view = glm::mat4(glm::mat3(camera.GetViewMatrix()));
-		glm::mat4 projection = glm::perspective(glm::radians(130.0f), aspectRatio, 0.1f, 10000.0f);
+		glm::mat4 projection = glm::perspective(glm::radians(45.0f), aspectRatio, 0.1f, 100.0f);
 
 		glUniformMatrix4fv(glGetUniformLocation(cubeShader.Program, "model"),
 			1, GL_FALSE, glm::value_ptr(model));
@@ -203,34 +216,76 @@ int main(int argc, char* argv[])
 
 		glUniform3f(glGetUniformLocation(cubeShader.Program, "cameraPos"), camera.Position.x, camera.Position.y, camera.Position.z);
 
-		// Create the view matrix
+		// Create the view matrices
 		ballShader.Use();
 		glUniformMatrix4fv(glGetUniformLocation(ballShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(camera.GetViewMatrix()));
 
-		// Create model matrix
+		platformShader.Use();
+		glUniformMatrix4fv(glGetUniformLocation(platformShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(camera.GetViewMatrix()));
+
+		// =======================================================================
+		//  Create ball model matrix
+		// =======================================================================
 		ballShader.Use();
 		glm::mat4 ballModel = glm::mat4(1);
 
-		ballModel = glm::scale(ballModel, glm::vec3(20.0f));
+		ballModel = glm::scale(ballModel, glm::vec3(10.0f));
 		ballModel = glm::translate(ballModel, glm::vec3(0.0f, 0.0f, 0.0f));
 
-		ballAngle += 0.001;
-		ballModel = glm::rotate(ballModel, ballAngle, glm::vec3(1.0f, 1.0f, 1.0f));
-
-		
-		// Pass the model matrix to the shader as "model"
+		// Pass the ball model matrix to the shader as "model"
 		glUniformMatrix4fv(glGetUniformLocation(ballShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(ballModel));
 		glUniform1i(glGetUniformLocation(ballShader.Program, "texture_diffuse1"), 0);
-	
-		// Draw the object
+
+		// Draw the ball object
 		bowlingBall.Draw(ballShader);
 
+		// Draw bowling pins
+		bowlingPinsShader.Use();
+
+		// Set view & projection matrices for the pins
+		glUniformMatrix4fv(glGetUniformLocation(bowlingPinsShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(camera.GetViewMatrix()));
+		glUniformMatrix4fv(glGetUniformLocation(bowlingPinsShader.Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+
+		// Create a model matrix for the pins
+		glm::mat4 pinsModel = glm::mat4(1.0f);
+		pinsModel = glm::scale(pinsModel, glm::vec3(50.0f));
+		pinsModel = glm::translate(pinsModel, glm::vec3(0.0f, 0.0f, 5.0f)); // adjust Z so it’s behind the ball
+
+		glUniformMatrix4fv(glGetUniformLocation(bowlingPinsShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(pinsModel));
+		glUniform1i(glGetUniformLocation(bowlingPinsShader.Program, "texture_diffuse1"), 0);
+
+		// Draw pins
+		bowlingPins.Draw(bowlingPinsShader);
+
+
 		// Setup the skybox with its matrices
+		// =======================================================================
+		//  Create platform model matrix
+		// =======================================================================
+		platformShader.Use();
+		glm::mat4 platformModel = glm::mat4(1);
+
+		platformModel = glm::scale(platformModel, glm::vec3(300.0f));
+		platformModel = glm::translate(platformModel, glm::vec3(0.0f, -10.0f, -10.0f));
+
+		// Pass the platform model matrix to the shader as "model"
+		glUniformMatrix4fv(glGetUniformLocation(platformShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(platformModel));
+		glUniform1i(glGetUniformLocation(platformShader.Program, "texture_diffuse1"), 0);
+
+		// Draw the platorm object
+		platform.Draw(platformShader);
+
+		// Zoom the camera
+		camera.Position = glm::vec3(camera.Position.x, camera.Position.y, camera.Position.z + 1);
+
+		// =======================================================================
+		//  Setup the skybox with its matrices
+		// =======================================================================
 		// Change the depth function so depth test passes when values are equal to depth buffer's content
 		glDepthFunc(GL_LEQUAL);
 		skyboxShader.Use();
 
-		// Reset the view matrix to accomodate camera movements
+		// Reset the view matrix to accommodate camera movements
 		view = glm::mat4(glm::mat3(camera.GetViewMatrix()));
 
 		// Pass view and projection matrices to the shaders
