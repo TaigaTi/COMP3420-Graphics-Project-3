@@ -32,24 +32,27 @@ public:
 
     // Initialize a Default Pin Layout (optional, to create a bowling formation)
     void initializeDefaultPins() {
-        float baseX = 0.0f; // Base X position
-        float baseZ = -580.0f; // Base Z position
-        float spacing = 5.0f; // Spacing between pins
+        float centerX = 0.0f; // Base X position
+        float centerZ = -380.0f; // Base Z position
         float floor = -2.0f;
 
+        float right1 = 10.0f;
+        float right2 = 20.0f;
+        float right3 = 30.0f;
+
         glm::vec3 pinPositions[10] = {
-            glm::vec3(0.0f, floor, -350.0f),  // First pin (front row, center)
-            glm::vec3(-10.0f, floor, -360.0f), // Second pin (left of first)
-            glm::vec3(10.0f, floor, -360.0f),  // Third pin (right of first)
+            glm::vec3(centerX, floor, centerZ + 20),  // First pin (front row, center)
+            glm::vec3(centerX -right1, floor, centerZ + 20), // Second pin (left of first)
+            glm::vec3(centerX + right1, floor, centerZ + 20),  // Third pin (right of first)
 
-            glm::vec3(-20.0f, floor, -380.0f), // Fourth pin (left of second)
-            glm::vec3(0.0f, floor, -380.0f),   // Fifth pin (center, second row)
-            glm::vec3(20.0f, floor, -380.0f),  // Sixth pin (right of second)
+            glm::vec3(centerX -right2, floor, centerZ), // Fourth pin (left of second)
+            glm::vec3(centerX, floor, centerZ),   // Fifth pin (center, second row)
+            glm::vec3(centerX + right2, floor, centerZ),  // Sixth pin (right of second)
 
-            glm::vec3(floor, floor, -400.0f), // Seventh pin (left of third)
-            glm::vec3(-10.0f, floor, -400.0f), // Eighth pin (left of center)
-            glm::vec3(10.0f, floor, -400.0f),  // Ninth pin (right of center)
-            glm::vec3(30.0f, floor, -400.0f),  // Tenth pin (right of third)
+            glm::vec3(centerX -right3, floor, centerZ - 20), // Seventh pin (left of third)
+            glm::vec3(centerX -right1, floor, centerZ - 20), // Eighth pin (left of center)
+            glm::vec3(centerX + right1, floor, centerZ - 20),  // Ninth pin (right of center)
+            glm::vec3(centerX + right3, floor, centerZ - 20),  // Tenth pin (right of third)
         };
 
 
