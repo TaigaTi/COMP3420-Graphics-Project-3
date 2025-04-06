@@ -22,6 +22,8 @@
 
 using namespace std;
 
+void processInput(GLFWwindow* window);
+
 
 // Display Window
 GLFWwindow* window;
@@ -44,6 +46,11 @@ void init() {
 		cout << "\nFailed to Initialize GLFW...";
 		exit(EXIT_FAILURE);
 	}
+
+	// Set the configuration info
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 
 	// Create the display window
@@ -75,6 +82,10 @@ void init() {
 
 	// Depth Test
 	glEnable(GL_DEPTH_TEST);
+
+	// Set viewport size
+	// This makes the bottom left be 0, 0
+	glViewport(0, 0, sWidth, sHeight);
 }
 
 int main(int argc, char* argv[])
@@ -172,8 +183,8 @@ int main(int argc, char* argv[])
 	// Keep displaying the window until we have shut it down
 	while (!glfwWindowShouldClose(window))
 	{
+		processInput(window); // Input Processing
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);			// Flush the color buffer
-		glfwPollEvents();											// Listen for other events
 	
 		// Set up the scene
 		cubeShader.Use();
@@ -240,6 +251,9 @@ int main(int argc, char* argv[])
 		// Reset the depth function back to its default
 		glDepthFunc(GL_LESS);
 
+		// Listen for other events (Should be done at the end of the frame please.)
+		glfwPollEvents();
+
 		// Swap the front and back buffers
 		glfwSwapBuffers(window);            
 	}
@@ -281,4 +295,11 @@ GLuint loadCubeMap(std::vector<std::string> faces)
 	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 
 	return textureID;
+}
+
+void processInput(GLFWwindow* window)
+{
+	// We can handle input in here
+	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, true);
 }
