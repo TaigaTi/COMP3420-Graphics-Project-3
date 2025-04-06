@@ -365,7 +365,7 @@ int main(int argc, char* argv[])
 		//glm::mat4 pinsModel = glm::mat4(1.0f);
 
 		//pinsModel = glm::scale(pinsModel, glm::vec3(20.0f));
-		//pinsModel = glm::translate(pinsModel, glm::vec3(0.0f, -2.0f, -580.0f)); // adjust Z so its behind the ball
+		//pinsModel = glm::translate(pinsModel, glm::vec3(0.0f, -2.0f, -580.0f)); // adjust Z so it?s behind the ball
 
 		//glUniformMatrix4fv(glGetUniformLocation(pin.shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(pinsModel));
 		//glUniform1i(glGetUniformLocation(pin.shader.Program, "texture_diffuse1"), 0);
@@ -426,7 +426,7 @@ int main(int argc, char* argv[])
 		glfwPollEvents();
 
 		// Swap the front and back buffers
-		glfwSwapBuffers(window);            
+		glfwSwapBuffers(window);
 	}
 
 
