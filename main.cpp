@@ -37,6 +37,59 @@ GLuint loadCubeMap(vector<std::string>);
 Camera camera(glm::vec3(0.0f, 200.0f, 1000.0f));
 // Process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 
+// Ball position
+glm::vec3 ballPosition = glm::vec3(0.0f, 0.0f, 0.0f);
+
+// Movement flags and speed
+bool keys[1024];
+float deltaTime = 0.0f;
+float lastFrame = 0.0f;
+float movementSpeed = 100.0f; // Adjust this for faster/slower movement
+
+// Keyboard callback to track key presses
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
+{
+	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, GL_TRUE);
+
+	// Register key presses
+	if (key >= 0 && key < 1024)
+	{
+		if (action == GLFW_PRESS)
+			keys[key] = true;
+		else if (action == GLFW_RELEASE)
+			keys[key] = false;
+	}
+}
+
+void do_movement()
+{
+	/// Ball movement
+	float ballSpeed = 20.0f * deltaTime;
+
+	if (keys[GLFW_KEY_UP]) {
+		ballPosition.z -= ballSpeed;
+	}
+	if (keys[GLFW_KEY_DOWN]) {
+		ballPosition.z += ballSpeed;
+	}
+	if (keys[GLFW_KEY_LEFT]) {
+		ballPosition.x -= ballSpeed;
+	}
+	if (keys[GLFW_KEY_RIGHT]) {
+		ballPosition.x += ballSpeed;
+	}
+	// Camera movement
+	if (keys[GLFW_KEY_UP])
+		camera.ProcessKeyboard(FORWARD, deltaTime * movementSpeed);
+	if (keys[GLFW_KEY_DOWN])
+		camera.ProcessKeyboard(BACKWARD, deltaTime * movementSpeed);
+	if (keys[GLFW_KEY_LEFT])
+		camera.ProcessKeyboard(LEFT, deltaTime * movementSpeed);
+	if (keys[GLFW_KEY_RIGHT])
+		camera.ProcessKeyboard(RIGHT, deltaTime * movementSpeed);
+}
+
 bool firstMouse = true;
 float lastX = sWidth / 2.0f;
 float lastY = sHeight / 2.0f;
@@ -116,9 +169,12 @@ int main(int argc, char* argv[])
 	// Initialize resources
 	init();
 
+
+	glm::vec3 cameraOffset = camera.Position - ballPosition;
 	//Camera movement via mouse callback set
 	glfwSetCursorPosCallback(window, camera_view_callback);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetKeyCallback(window, key_callback);
 
 	// Setup and compile shaders
 	Shader ballShader("ballVertexShader.glsl", "ballFragmentShader.glsl");
@@ -222,8 +278,17 @@ int main(int argc, char* argv[])
 	// Keep displaying the window until we have shut it down
 	while (!glfwWindowShouldClose(window))
 	{
-		processInput(window);										// Input Processing
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);			// Flush the color buffer
+
+		float currentFrame = glfwGetTime();
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
+
+		processInput(window);		
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		do_movement();// Input Processing
+		cout << "Ball Pos: (" << ballPosition.x << ", " << ballPosition.z << ") | "
+			<< "Camera Pos: (" << camera.Position.x << ", " << camera.Position.z << ")" << endl;
+			// Flush the color buffer
 	
 		// =======================================================================
 		//  Setup the scene
@@ -263,7 +328,7 @@ int main(int argc, char* argv[])
 		glm::mat4 ballModel = glm::mat4(1);
 
 		ballModel = glm::scale(ballModel, glm::vec3(10.0f));
-		ballModel = glm::translate(ballModel, glm::vec3(0.0f, 0.0f, 0.0f));
+		ballModel = glm::translate(ballModel, ballPosition);
 
 		// Pass the ball model matrix to the shader as "model"
 		glUniformMatrix4fv(glGetUniformLocation(ballShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(ballModel));
