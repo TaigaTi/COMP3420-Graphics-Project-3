@@ -21,6 +21,7 @@
 #include "model.h"
 #include "ball.h"
 #include "pin.h"
+#include "pins.h"
 
 using namespace std;
 
@@ -192,7 +193,10 @@ int main(int argc, char* argv[])
 	//Model bowlingPins((GLchar*)"bowling_pins.obj");
 
 	Ball ball = Ball();
-	Pin pin = Pin();
+	//Pin pin = Pin();
+	Pins pins = Pins();
+
+	pins.initializeDefaultPins();
 
 	// Define bowling skybox vertices
 	GLfloat skyboxVertices[] =
@@ -278,7 +282,8 @@ int main(int argc, char* argv[])
 	glUniformMatrix4fv(glGetUniformLocation(ball.shader.Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));*/
 	platformShader.Use();
 	glUniformMatrix4fv(glGetUniformLocation(platformShader.Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-	pin.setProjection(projection);
+	//pin.setProjection(projection);
+	pins.setProjection(projection);
 	/*pin.shader.Use();
 	glUniformMatrix4fv(glGetUniformLocation(pin.shader.Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));*/
 
@@ -368,7 +373,8 @@ int main(int argc, char* argv[])
 		// Draw pins
 		//pin.model.Draw(pin.shader);
 		
-		pin.draw(camera);
+		//pin.draw(camera);
+		pins.draw(camera);
 
 
 		// =======================================================================

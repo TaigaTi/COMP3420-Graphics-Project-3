@@ -51,7 +51,8 @@ public:
 		glm::mat4 model = glm::mat4(1);
 
 		model = glm::scale(model, glm::vec3(20.0f));
-		model = glm::translate(model, glm::vec3(0.0f, -2.0f, -580.0f)); // Adjust Z so it's behind wall
+		model = glm::translate(model, this->position); // Adjust Z so it's behind wall
+		//model = glm::translate(model, glm::vec3(0.0f, -2.0f, -580.0f)); // Adjust Z so it's behind wall
 
 		glUniformMatrix4fv(glGetUniformLocation(this->shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 
