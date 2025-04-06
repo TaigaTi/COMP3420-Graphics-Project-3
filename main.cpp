@@ -34,7 +34,7 @@ GLfloat aspectRatio = (float)sWidth / (float)sHeight;
 GLuint loadCubeMap(vector<std::string>);
 
 // Camera
-Camera camera(glm::vec3(0.0f, 800.0f, 1500.0f)); 
+Camera camera(glm::vec3(0.0f, 1000.0f, 1500.0f)); 
 // Process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 
 // Ball position
@@ -327,7 +327,6 @@ int main(int argc, char* argv[])
 		ballModel = glm::scale(ballModel, glm::vec3(25.0f));
 		ballModel = glm::translate(ballModel, ballPosition);
 
-
 		// Pass the ball model matrix to the shader as "model"
 		glUniformMatrix4fv(glGetUniformLocation(ballShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(ballModel));
 		glUniform1i(glGetUniformLocation(ballShader.Program, "texture_diffuse1"), 0);
@@ -345,7 +344,7 @@ int main(int argc, char* argv[])
 		glm::mat4 pinsModel = glm::mat4(1.0f);
 
 		pinsModel = glm::scale(pinsModel, glm::vec3(20.0f));
-		pinsModel = glm::translate(pinsModel, glm::vec3(0.0f, -2.0f, -580.0f)); // adjust Z so it’s behind the ball
+		pinsModel = glm::translate(pinsModel, glm::vec3(0.0f, -2.0f, -580.0f)); // adjust Z so itÂ’s behind the ball
 
 		glUniformMatrix4fv(glGetUniformLocation(bowlingPinsShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(pinsModel));
 		glUniform1i(glGetUniformLocation(bowlingPinsShader.Program, "texture_diffuse1"), 0);
@@ -361,7 +360,7 @@ int main(int argc, char* argv[])
 		glm::mat4 platformModel = glm::mat4(1);
 
 		platformModel = glm::scale(platformModel, glm::vec3(500.0f));
-		platformModel = glm::translate(platformModel, glm::vec3(0.0f, -2.0f, 15.0f));
+		platformModel = glm::translate(platformModel, glm::vec3(0.0f, 0.0f, 15.0f));
 
 		// Pass the platform model matrix to the shader as "model"
 		glUniformMatrix4fv(glGetUniformLocation(platformShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(platformModel));
