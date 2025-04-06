@@ -26,13 +26,13 @@ using namespace std;
 // Display Window
 GLFWwindow* window;
 GLuint sWidth = 1920, sHeight = 1080;
-GLfloat aspectRatio = sWidth / sHeight;
+GLfloat aspectRatio = (float)sWidth / (float)sHeight;
 
 // Function Prototypes
 GLuint loadCubeMap(vector<std::string>);
 
 // Camera
-Camera camera(glm::vec3(0.0f, 200.0f, 3000.0f));
+Camera camera(glm::vec3(0.0f, 200.0f, 5000.0f));
 
 // Ball Angle
 GLfloat ballAngle = 0.0;
@@ -177,9 +177,9 @@ int main(int argc, char* argv[])
 	
 		// Set up the scene
 		cubeShader.Use();
-		glm::mat4 model;
-		glm::mat4 view = camera.GetViewMatrix();
-		glm::mat4 projection = glm::perspective(camera.Zoom, aspectRatio, 0.1f, 100.0f);
+		glm::mat4 model = glm::translate(model, glm::vec3(0.0f, 0.0f, -1000.0f));
+		glm::mat4 view = glm::mat4(glm::mat3(camera.GetViewMatrix()));
+		glm::mat4 projection = glm::perspective(glm::radians(130.0f), aspectRatio, 0.1f, 10000.0f);
 
 		glUniformMatrix4fv(glGetUniformLocation(cubeShader.Program, "model"),
 			1, GL_FALSE, glm::value_ptr(model));
