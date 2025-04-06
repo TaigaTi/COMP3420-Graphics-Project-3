@@ -323,9 +323,10 @@ int main(int argc, char* argv[])
 		ballShader.Use();
 		glm::mat4 ballModel = glm::mat4(1);
 
-
 		ballModel = glm::scale(ballModel, glm::vec3(25.0f));
 		ballModel = glm::translate(ballModel, ballPosition);
+		ballModel = glm::rotate(ballModel, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		ballModel = glm::rotate(ballModel, (float)glfwGetTime() * 10, glm::vec3(0.0f, 0.0f, -1.0f));
 
 		// Pass the ball model matrix to the shader as "model"
 		glUniformMatrix4fv(glGetUniformLocation(ballShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(ballModel));
