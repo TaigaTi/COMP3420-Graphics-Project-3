@@ -343,16 +343,44 @@ int main(int argc, char* argv[])
 		//  Create bowling pins model matrix
 		// =======================================================================
 		bowlingPinsShader.Use();
-		glm::mat4 pinsModel = glm::mat4(1.0f);
 
-		pinsModel = glm::scale(pinsModel, glm::vec3(20.0f));
-		pinsModel = glm::translate(pinsModel, glm::vec3(0.0f, -2.0f, -580.0f)); // adjust Z so its behind the ball
+		// Array to store the positions of the 10 pins with increased spacing
+		glm::vec3 pinPositions[10] = {
+	glm::vec3(0.0f, -30.0f, -350.0f),  // First pin (front row, center)
+	glm::vec3(-10.0f, -30.0f, -360.0f), // Second pin (left of first)
+	glm::vec3(10.0f, -30.0f, -360.0f),  // Third pin (right of first)
 
-		glUniformMatrix4fv(glGetUniformLocation(bowlingPinsShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(pinsModel));
-		glUniform1i(glGetUniformLocation(bowlingPinsShader.Program, "texture_diffuse1"), 0);
+	glm::vec3(-20.0f, -30.0f, -380.0f), // Fourth pin (left of second)
+	glm::vec3(0.0f, -30.0f, -380.0f),   // Fifth pin (center, second row)
+	glm::vec3(20.0f, -30.0f, -380.0f),  // Sixth pin (right of second)
 
-		// Draw pins
-		bowlingPins.Draw(bowlingPinsShader);
+	glm::vec3(-30.0f, -30.0f, -400.0f), // Seventh pin (left of third)
+	glm::vec3(-10.0f, -30.0f, -400.0f), // Eighth pin (left of center)
+	glm::vec3(10.0f, -30.0f, -400.0f),  // Ninth pin (right of center)
+	glm::vec3(30.0f, -30.0f, -400.0f),  // Tenth pin (right of third)
+		};
+
+
+
+
+		// Loop through all the pins and draw them
+		for (int i = 0; i < 10; ++i) {
+			glm::mat4 pinModel = glm::mat4(1.0f);  // Reset model matrix for each pin
+
+			// Scale the pin size
+			pinModel = glm::scale(pinModel, glm::vec3(23.0f)); // Scale the pin uniformly
+
+			// Apply the translation for each pin position from the array
+			pinModel = glm::translate(pinModel, pinPositions[i]);
+
+			// Set the model matrix for the shader
+			glUniformMatrix4fv(glGetUniformLocation(bowlingPinsShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(pinModel));
+			glUniform1i(glGetUniformLocation(bowlingPinsShader.Program, "texture_diffuse1"), 0);
+
+			// Draw the pin
+			bowlingPins.Draw(bowlingPinsShader);
+		}
+
 
 
 		// =======================================================================
@@ -404,7 +432,7 @@ int main(int argc, char* argv[])
 		glfwPollEvents();
 
 		// Swap the front and back buffers
-		glfwSwapBuffers(window);            
+		glfwSwapBuffers(window);
 	}
 
 
