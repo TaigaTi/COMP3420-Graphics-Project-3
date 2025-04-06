@@ -70,9 +70,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
 void do_movement(Ball* ball)
 {
-	/// Ball movement
-	float ballSpeed = getBallSpeed();
-
 	if (keys[GLFW_KEY_UP]) {
 		//ballPosition.z -= ballSpeed;
 		isRolling = true;
@@ -355,6 +352,11 @@ int main(int argc, char* argv[])
 
 		//// Draw the ball object
 		//ball.model.Draw(ball.shader);
+
+		if (isRolling == true) {
+			ball.move(0, -1, deltaTime);
+		}
+
 		ball.draw(camera);
 
 
