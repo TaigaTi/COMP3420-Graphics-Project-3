@@ -29,6 +29,11 @@ public:
 		this->model = Model((GLchar*)"bowling_ball.obj");
 	}
 
+	void setProjection(glm::mat4 projection) {
+		this->shader.Use();
+		glUniformMatrix4fv(glGetUniformLocation(this->shader.Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+	}
+
 	float getBallSpeed(float deltaTime) {
 		return SPEED * deltaTime;
 	}
@@ -54,6 +59,11 @@ public:
 		glUniform1i(glGetUniformLocation(this->shader.Program, "texture_diffuse1"), 0);
 
 		this->model.Draw(this->shader);
+	}
+
+	void move(int right = 0, int forward = 0, float deltaTime=0.0f) {
+		this->position.x += this->getBallSpeed(deltaTime) * right;
+		this->position.z += this->getBallSpeed(deltaTime) * forward;
 	}
 
 };

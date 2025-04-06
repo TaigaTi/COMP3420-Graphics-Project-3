@@ -64,22 +64,26 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	}
 }
 
-void do_movement()
+void do_movement(Ball* ball)
 {
 	/// Ball movement
 	float ballSpeed = 29.0f * deltaTime;
 
 	if (keys[GLFW_KEY_UP]) {
-		ballPosition.z -= ballSpeed;
+		//ballPosition.z -= ballSpeed;
+		ball->move(0, -1, deltaTime);
 	}
 	if (keys[GLFW_KEY_DOWN]) {
-		ballPosition.z += ballSpeed;
+		ball->move(0, 1, deltaTime);
+		//ballPosition.z += ballSpeed;
 	}
 	if (keys[GLFW_KEY_LEFT]) {
-		ballPosition.x -= ballSpeed;
+		ball->move(-1, 0, deltaTime);
+		//ballPosition.x -= ballSpeed;
 	}
 	if (keys[GLFW_KEY_RIGHT]) {
-		ballPosition.x += ballSpeed;
+		ball->move(1, 0, deltaTime);
+		//ballPosition.x += ballSpeed;
 	}
 	// Camera movement
 	if (keys[GLFW_KEY_UP])
@@ -175,16 +179,18 @@ int main(int argc, char* argv[])
 	glfwSetKeyCallback(window, key_callback);
 
 	// Setup and compile shaders
-	Shader ballShader("ballVertexShader.glsl", "ballFragmentShader.glsl");
+	//Shader ball.shader("ballVertexShader.glsl", "ballFragmentShader.glsl");
 	Shader skyboxShader("skyboxVertexShader.glsl", "skyboxFragmentShader.glsl");
 	Shader cubeShader("cubeMapVertexShader.glsl", "cubeMapFragmentShader.glsl");
 	Shader bowlingPinsShader("bowlingPinsVertexShader.glsl", "bowlingPinsFragmentShader.glsl");
 	Shader platformShader("platformVertexShader.glsl", "platformFragmentShader.glsl");
 
 	// Load the bowling ball model object
-	Model bowlingBall((GLchar*)"bowling_ball.obj");
+	//Model bowlingBall((GLchar*)"bowling_ball.obj");
 	Model platform((GLchar*)"platform.obj");
 	Model bowlingPins((GLchar*)"bowling_pins.obj");
+
+	Ball ball = Ball();
 
 	// Define bowling skybox vertices
 	GLfloat skyboxVertices[] =
@@ -265,8 +271,9 @@ int main(int argc, char* argv[])
 	//  Create the projection matrix
 	// =======================================================================
 	glm::mat4 projection = glm::perspective(45.0f, (GLfloat)sWidth / (GLfloat)sHeight, 0.1f, 50000.0f);
-	ballShader.Use();
-	glUniformMatrix4fv(glGetUniformLocation(ballShader.Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+	ball.setProjection(projection);
+	/*ball.shader.Use();
+	glUniformMatrix4fv(glGetUniformLocation(ball.shader.Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));*/
 	platformShader.Use();
 	glUniformMatrix4fv(glGetUniformLocation(platformShader.Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 	bowlingPinsShader.Use();
@@ -283,9 +290,9 @@ int main(int argc, char* argv[])
 
 		processInput(window);		
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		do_movement();// Input Processing
-		cout << "Ball Pos: (" << ballPosition.x << ", " << ballPosition.z << ") | "
-			<< "Camera Pos: (" << camera.Position.x << ", " << camera.Position.z << ")" << endl;
+		do_movement(&ball);// Input Processing
+		//cout << "Ball Pos: (" << ballPosition.x << ", " << ballPosition.z << ") | "
+		//	<< "Camera Pos: (" << camera.Position.x << ", " << camera.Position.z << ")" << endl;
 			// Flush the color buffer
 	
 		// =======================================================================
@@ -309,8 +316,6 @@ int main(int argc, char* argv[])
 		glUniform3f(glGetUniformLocation(cubeShader.Program, "cameraPos"), camera.Position.x, camera.Position.y, camera.Position.z);
 
 		// Create the view matrices
-		ballShader.Use();
-		glUniformMatrix4fv(glGetUniformLocation(ballShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(camera.GetViewMatrix()));
 
 		platformShader.Use();
 		glUniformMatrix4fv(glGetUniformLocation(platformShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(camera.GetViewMatrix()));
@@ -318,24 +323,29 @@ int main(int argc, char* argv[])
 		bowlingPinsShader.Use();
 		glUniformMatrix4fv(glGetUniformLocation(bowlingPinsShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(camera.GetViewMatrix()));
 
+		// Do Ball Rendering
+		//ball.shader.Use();
+		//glUniformMatrix4fv(glGetUniformLocation(ball.shader.Program, "view"), 1, GL_FALSE, glm::value_ptr(camera.GetViewMatrix()));
 
-		// =======================================================================
-		//  Create ball model matrix
-		// =======================================================================
-		ballShader.Use();
-		glm::mat4 ballModel = glm::mat4(1);
+		//// =======================================================================
+		////  Create ball model matrix
+		//// =======================================================================
+		//ball.shader.Use();
+		//glm::mat4 ballModel = glm::mat4(1);
 
-		ballModel = glm::translate(ballModel, ballPosition * SCALE);
-		ballModel = glm::rotate(ballModel, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-		ballModel = glm::rotate(ballModel, (float)glfwGetTime() * 10, glm::vec3(0.0f, 0.0f, -1.0f));
-		ballModel = glm::scale(ballModel, glm::vec3(SCALE));
+		//ballModel = glm::translate(ballModel, ballPosition * SCALE);
+		//ballModel = glm::rotate(ballModel, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		//ballModel = glm::rotate(ballModel, (float)glfwGetTime() * 10, glm::vec3(0.0f, 0.0f, -1.0f));
+		//ballModel = glm::scale(ballModel, glm::vec3(SCALE));
 
-		// Pass the ball model matrix to the shader as "model"
-		glUniformMatrix4fv(glGetUniformLocation(ballShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(ballModel));
-		glUniform1i(glGetUniformLocation(ballShader.Program, "texture_diffuse1"), 0);
+		//// Pass the ball model matrix to the shader as "model"
+		//glUniformMatrix4fv(glGetUniformLocation(ball.shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(ballModel));
+		//glUniform1i(glGetUniformLocation(ball.shader.Program, "texture_diffuse1"), 0);
 
-		// Draw the ball object
-		bowlingBall.Draw(ballShader);
+		//// Draw the ball object
+		//ball.model.Draw(ball.shader);
+		ball.draw(camera);
+
 
 		// Draw bowling pins
 		bowlingPinsShader.Use();
