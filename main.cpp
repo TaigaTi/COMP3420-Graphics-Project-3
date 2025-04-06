@@ -20,6 +20,7 @@
 #include "shader.h"
 #include "model.h"
 #include "ball.h"
+#include "pin.h"
 
 using namespace std;
 
@@ -182,15 +183,16 @@ int main(int argc, char* argv[])
 	//Shader ball.shader("ballVertexShader.glsl", "ballFragmentShader.glsl");
 	Shader skyboxShader("skyboxVertexShader.glsl", "skyboxFragmentShader.glsl");
 	Shader cubeShader("cubeMapVertexShader.glsl", "cubeMapFragmentShader.glsl");
-	Shader bowlingPinsShader("bowlingPinsVertexShader.glsl", "bowlingPinsFragmentShader.glsl");
+	//Shader pin.shader("bowlingPinsVertexShader.glsl", "bowlingPinsFragmentShader.glsl");
 	Shader platformShader("platformVertexShader.glsl", "platformFragmentShader.glsl");
 
 	// Load the bowling ball model object
 	//Model bowlingBall((GLchar*)"bowling_ball.obj");
 	Model platform((GLchar*)"platform.obj");
-	Model bowlingPins((GLchar*)"bowling_pins.obj");
+	//Model bowlingPins((GLchar*)"bowling_pins.obj");
 
 	Ball ball = Ball();
+	Pin pin = Pin();
 
 	// Define bowling skybox vertices
 	GLfloat skyboxVertices[] =
@@ -276,8 +278,9 @@ int main(int argc, char* argv[])
 	glUniformMatrix4fv(glGetUniformLocation(ball.shader.Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));*/
 	platformShader.Use();
 	glUniformMatrix4fv(glGetUniformLocation(platformShader.Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-	bowlingPinsShader.Use();
-	glUniformMatrix4fv(glGetUniformLocation(bowlingPinsShader.Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+	pin.setProjection(projection);
+	/*pin.shader.Use();
+	glUniformMatrix4fv(glGetUniformLocation(pin.shader.Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));*/
 
 
 	// Keep displaying the window until we have shut it down
@@ -320,8 +323,8 @@ int main(int argc, char* argv[])
 		platformShader.Use();
 		glUniformMatrix4fv(glGetUniformLocation(platformShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(camera.GetViewMatrix()));
 
-		bowlingPinsShader.Use();
-		glUniformMatrix4fv(glGetUniformLocation(bowlingPinsShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(camera.GetViewMatrix()));
+		/*pin.shader.Use();
+		glUniformMatrix4fv(glGetUniformLocation(pin.shader.Program, "view"), 1, GL_FALSE, glm::value_ptr(camera.GetViewMatrix()));*/
 
 		// Do Ball Rendering
 		//ball.shader.Use();
@@ -348,22 +351,24 @@ int main(int argc, char* argv[])
 
 
 		// Draw bowling pins
-		bowlingPinsShader.Use();
+		//pin.shader.Use();
 
 		// =======================================================================
 		//  Create bowling pins model matrix
 		// =======================================================================
-		bowlingPinsShader.Use();
-		glm::mat4 pinsModel = glm::mat4(1.0f);
+		//pin.shader.Use();
+		//glm::mat4 pinsModel = glm::mat4(1.0f);
 
-		pinsModel = glm::scale(pinsModel, glm::vec3(20.0f));
-		pinsModel = glm::translate(pinsModel, glm::vec3(0.0f, -2.0f, -580.0f)); // adjust Z so its behind the ball
+		//pinsModel = glm::scale(pinsModel, glm::vec3(20.0f));
+		//pinsModel = glm::translate(pinsModel, glm::vec3(0.0f, -2.0f, -580.0f)); // adjust Z so its behind the ball
 
-		glUniformMatrix4fv(glGetUniformLocation(bowlingPinsShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(pinsModel));
-		glUniform1i(glGetUniformLocation(bowlingPinsShader.Program, "texture_diffuse1"), 0);
+		//glUniformMatrix4fv(glGetUniformLocation(pin.shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(pinsModel));
+		//glUniform1i(glGetUniformLocation(pin.shader.Program, "texture_diffuse1"), 0);
 
 		// Draw pins
-		bowlingPins.Draw(bowlingPinsShader);
+		//pin.model.Draw(pin.shader);
+		
+		pin.draw(camera);
 
 
 		// =======================================================================
