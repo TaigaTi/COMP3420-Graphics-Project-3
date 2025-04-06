@@ -34,7 +34,7 @@ GLfloat aspectRatio = (float)sWidth / (float)sHeight;
 GLuint loadCubeMap(vector<std::string>);
 
 // Camera
-Camera camera(glm::vec3(0.0f, 800.0f, 1500.0f)); 
+Camera camera(glm::vec3(0.0f, 1000.0f, 1500.0f)); 
 // Process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 
 bool firstMouse = true;
@@ -259,7 +259,7 @@ int main(int argc, char* argv[])
 		glm::mat4 ballModel = glm::mat4(1);
 
 		ballModel = glm::scale(ballModel, glm::vec3(25.0f));
-		ballModel = glm::translate(ballModel, glm::vec3(0.0f, 0.0f, -50.0f));
+		ballModel = glm::translate(ballModel, glm::vec3(0.0f, 10.0f, -50.0f));
 
 		// Pass the ball model matrix to the shader as "model"
 		glUniformMatrix4fv(glGetUniformLocation(ballShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(ballModel));
@@ -294,7 +294,7 @@ int main(int argc, char* argv[])
 		glm::mat4 platformModel = glm::mat4(1);
 
 		platformModel = glm::scale(platformModel, glm::vec3(500.0f));
-		platformModel = glm::translate(platformModel, glm::vec3(0.0f, -2.0f, 15.0f));
+		platformModel = glm::translate(platformModel, glm::vec3(0.0f, 0.0f, 15.0f));
 
 		// Pass the platform model matrix to the shader as "model"
 		glUniformMatrix4fv(glGetUniformLocation(platformShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(platformModel));
