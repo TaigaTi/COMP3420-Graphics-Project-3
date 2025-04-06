@@ -130,7 +130,7 @@ int main(int argc, char* argv[])
 	// Load the bowling ball model object
 	Model bowlingBall((GLchar*)"bowling_ball.obj");
 	Model platform((GLchar*)"platform.obj");
-	Model bowlingPins((GLchar*)"High Poly.obj");
+	Model bowlingPins((GLchar*)"bowling_pins.obj");
 
 	// Define bowling skybox vertices
 	GLfloat skyboxVertices[] =
@@ -215,6 +215,8 @@ int main(int argc, char* argv[])
 	glUniformMatrix4fv(glGetUniformLocation(ballShader.Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 	platformShader.Use();
 	glUniformMatrix4fv(glGetUniformLocation(platformShader.Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+	bowlingPinsShader.Use();
+	glUniformMatrix4fv(glGetUniformLocation(bowlingPinsShader.Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
 
 	// Keep displaying the window until we have shut it down
@@ -250,6 +252,10 @@ int main(int argc, char* argv[])
 		platformShader.Use();
 		glUniformMatrix4fv(glGetUniformLocation(platformShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(camera.GetViewMatrix()));
 
+		bowlingPinsShader.Use();
+		glUniformMatrix4fv(glGetUniformLocation(bowlingPinsShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(camera.GetViewMatrix()));
+
+
 		// =======================================================================
 		//  Create ball model matrix
 		// =======================================================================
@@ -269,13 +275,13 @@ int main(int argc, char* argv[])
 		// Draw bowling pins
 		bowlingPinsShader.Use();
 
-		// Set view & projection matrices for the pins
-		glUniformMatrix4fv(glGetUniformLocation(bowlingPinsShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(camera.GetViewMatrix()));
-		glUniformMatrix4fv(glGetUniformLocation(bowlingPinsShader.Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-
-		// Create a model matrix for the pins
+		// =======================================================================
+		//  Create bowling pins model matrix
+		// =======================================================================
+		bowlingPinsShader.Use();
 		glm::mat4 pinsModel = glm::mat4(1.0f);
-		pinsModel = glm::scale(pinsModel, glm::vec3(50.0f));
+
+		pinsModel = glm::scale(pinsModel, glm::vec3(10.0f));
 		pinsModel = glm::translate(pinsModel, glm::vec3(0.0f, 0.0f, 5.0f)); // adjust Z so it’s behind the ball
 
 		glUniformMatrix4fv(glGetUniformLocation(bowlingPinsShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(pinsModel));
@@ -285,7 +291,6 @@ int main(int argc, char* argv[])
 		bowlingPins.Draw(bowlingPinsShader);
 
 
-		// Setup the skybox with its matrices
 		// =======================================================================
 		//  Create platform model matrix
 		// =======================================================================
@@ -299,11 +304,9 @@ int main(int argc, char* argv[])
 		glUniformMatrix4fv(glGetUniformLocation(platformShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(platformModel));
 		glUniform1i(glGetUniformLocation(platformShader.Program, "texture_diffuse1"), 0);
 
-		// Draw the platorm object
+		// Draw the platform object
 		platform.Draw(platformShader);
 
-		// Zoom the camera
-		camera.Position = glm::vec3(camera.Position.x, camera.Position.y, camera.Position.z + 1);
 
 		// =======================================================================
 		//  Setup the skybox with its matrices
