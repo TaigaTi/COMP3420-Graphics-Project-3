@@ -44,7 +44,7 @@ glm::vec3 ballPosition = glm::vec3(0.0f, 0.0f, 0.0f);
 bool keys[1024];
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
-float movementSpeed = 100.0f; // Adjust this for faster/slower movement
+float movementSpeed = 200.0f; // Adjust this for faster/slower movement
 
 // Keyboard callback to track key presses
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
@@ -65,7 +65,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 void do_movement()
 {
 	/// Ball movement
-	float ballSpeed = 20.0f * deltaTime;
+	float ballSpeed = 29.0f * deltaTime;
 
 	if (keys[GLFW_KEY_UP]) {
 		ballPosition.z -= ballSpeed;
