@@ -289,11 +289,9 @@ int main(int argc, char* argv[])
 		lastFrame = currentFrame;
 
 		processInput(window);		
+			// Flush the color buffer
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		do_movement();// Input Processing
-		cout << "Ball Pos: (" << ballPosition.x << ", " << ballPosition.z << ") | "
-			<< "Camera Pos: (" << camera.Position.x << ", " << camera.Position.z << ")" << endl;
-			// Flush the color buffer
 	
 		// =======================================================================
 		//  Setup the scene
