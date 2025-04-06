@@ -35,17 +35,30 @@ public:
         float baseX = 0.0f; // Base X position
         float baseZ = -580.0f; // Base Z position
         float spacing = 5.0f; // Spacing between pins
+        float floor = -2.0f;
+
+        glm::vec3 pinPositions[10] = {
+            glm::vec3(0.0f, floor, -350.0f),  // First pin (front row, center)
+            glm::vec3(-10.0f, floor, -360.0f), // Second pin (left of first)
+            glm::vec3(10.0f, floor, -360.0f),  // Third pin (right of first)
+
+            glm::vec3(-20.0f, floor, -380.0f), // Fourth pin (left of second)
+            glm::vec3(0.0f, floor, -380.0f),   // Fifth pin (center, second row)
+            glm::vec3(20.0f, floor, -380.0f),  // Sixth pin (right of second)
+
+            glm::vec3(floor, floor, -400.0f), // Seventh pin (left of third)
+            glm::vec3(-10.0f, floor, -400.0f), // Eighth pin (left of center)
+            glm::vec3(10.0f, floor, -400.0f),  // Ninth pin (right of center)
+            glm::vec3(30.0f, floor, -400.0f),  // Tenth pin (right of third)
+        };
+
 
         // Create a triangular formation
-        pins.push_back(Pin(glm::vec3(baseX, -2.0f, baseZ))); // 1st row
-        pins.push_back(Pin(glm::vec3(baseX - spacing, -2.0f, baseZ - spacing)));
-        pins.push_back(Pin(glm::vec3(baseX + spacing, -2.0f, baseZ - spacing))); // 2nd row
-        pins.push_back(Pin(glm::vec3(baseX - 2 * spacing, -2.0f, baseZ - 2 * spacing)));
-        pins.push_back(Pin(glm::vec3(baseX, -2.0f, baseZ - 2 * spacing)));
-        pins.push_back(Pin(glm::vec3(baseX + 2 * spacing, -2.0f, baseZ - 2 * spacing))); // 3rd row
-        pins.push_back(Pin(glm::vec3(baseX - 3 * spacing, -2.0f, baseZ - 3 * spacing)));
-        pins.push_back(Pin(glm::vec3(baseX - spacing, -2.0f, baseZ - 3 * spacing)));
-        pins.push_back(Pin(glm::vec3(baseX + spacing, -2.0f, baseZ - 3 * spacing)));
-        pins.push_back(Pin(glm::vec3(baseX + 3 * spacing, -2.0f, baseZ - 3 * spacing))); // 4th row
+
+        // Loop through all the pins and draw them
+        for (int i = 0; i < 10; ++i) {
+            pins.push_back(Pin(pinPositions[i])); // 1st row
+        }
+            //pinModel = glm::scale(pinModel, glm::vec3(23.0f)); // Scale the pin uniformly
     }
 };
