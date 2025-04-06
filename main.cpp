@@ -38,7 +38,7 @@ Camera camera(glm::vec3(0.0f, 1000.0f, 1500.0f));
 // Process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 
 // Ball position
-float scale = 25.0f;
+const float SCALE = 25.0f;
 glm::vec3 ballPosition = glm::vec3(0.0f, 0.0f, 0.0f);
 
 // Movement flags and speed
@@ -324,10 +324,10 @@ int main(int argc, char* argv[])
 		ballShader.Use();
 		glm::mat4 ballModel = glm::mat4(1);
 
-		ballModel = glm::translate(ballModel, ballPosition * scale);
+		ballModel = glm::translate(ballModel, ballPosition * SCALE);
 		ballModel = glm::rotate(ballModel, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		ballModel = glm::rotate(ballModel, (float)glfwGetTime() * 10, glm::vec3(0.0f, 0.0f, -1.0f));
-		ballModel = glm::scale(ballModel, glm::vec3(scale));
+		ballModel = glm::scale(ballModel, glm::vec3(SCALE));
 
 		// Pass the ball model matrix to the shader as "model"
 		glUniformMatrix4fv(glGetUniformLocation(ballShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(ballModel));
