@@ -97,11 +97,13 @@ int main(int argc, char* argv[])
 	Shader ballShader("ballVertexShader.glsl", "ballFragmentShader.glsl");
 	Shader skyboxShader("skyboxVertexShader.glsl", "skyboxFragmentShader.glsl");
 	Shader cubeShader("cubeMapVertexShader.glsl", "cubeMapFragmentShader.glsl");
+	Shader bowlingPinsShader("bowlingPinsVertexShader.glsl", "bowlingPinsFragmentShader.glsl");
 	Shader platformShader("platformVertexShader.glsl", "platformFragmentShader.glsl");
 
 	// Load the bowling ball model object
 	Model bowlingBall((GLchar*)"bowling_ball.obj");
 	Model platform((GLchar*)"platform.obj");
+	Model bowlingPins((GLchar*)"High Poly.obj");
 
 	// Define bowling skybox vertices
 	GLfloat skyboxVertices[] =
@@ -198,7 +200,8 @@ int main(int argc, char* argv[])
 		//  Setup the scene
 		// =======================================================================
 		cubeShader.Use();
-		glm::mat4 model = glm::translate(model, glm::vec3(0.0f, 0.0f, -1000.0f));
+		glm::mat4 model = glm::mat4(1.0f); // Start with clean matrix
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -1000.0f));
 		glm::mat4 view = glm::mat4(glm::mat3(camera.GetViewMatrix()));
 		glm::mat4 projection = glm::perspective(glm::radians(45.0f), aspectRatio, 0.1f, 100.0f);
 
@@ -236,6 +239,26 @@ int main(int argc, char* argv[])
 		// Draw the ball object
 		bowlingBall.Draw(ballShader);
 
+		// Draw bowling pins
+		bowlingPinsShader.Use();
+
+		// Set view & projection matrices for the pins
+		glUniformMatrix4fv(glGetUniformLocation(bowlingPinsShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(camera.GetViewMatrix()));
+		glUniformMatrix4fv(glGetUniformLocation(bowlingPinsShader.Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+
+		// Create a model matrix for the pins
+		glm::mat4 pinsModel = glm::mat4(1.0f);
+		pinsModel = glm::scale(pinsModel, glm::vec3(50.0f));
+		pinsModel = glm::translate(pinsModel, glm::vec3(0.0f, 0.0f, 5.0f)); // adjust Z so it’s behind the ball
+
+		glUniformMatrix4fv(glGetUniformLocation(bowlingPinsShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(pinsModel));
+		glUniform1i(glGetUniformLocation(bowlingPinsShader.Program, "texture_diffuse1"), 0);
+
+		// Draw pins
+		bowlingPins.Draw(bowlingPinsShader);
+
+
+		// Setup the skybox with its matrices
 		// =======================================================================
 		//  Create platform model matrix
 		// =======================================================================
