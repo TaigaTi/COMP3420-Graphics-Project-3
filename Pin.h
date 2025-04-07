@@ -11,28 +11,32 @@
 #include "shader.h"
 #include "camera.h"
 #include "model.h"
+#include "rect.h"
 
 class Pin
 {
 
 public:
-	const float SCALE = 25.0f;
-	const float SPEED = 29.0f;
+	const float SCALE = 23.0f;
 
 	glm::vec3 position;
 	Shader shader;
 	Model model;
+	Rect rect;
 
-	Pin(glm::vec3 position) {
-		this->position = position;
-		this->shader = Shader("bowlingPinsVertexShader.glsl", "bowlingPinsFragmentShader.glsl");
-		this->model = Model((GLchar*)"bowling_pins.obj");
-	}
+	Pin()
+		: position(glm::vec3(0.0f, 0.0f, 0.0f)),
+		shader("bowlingPinsVertexShader.glsl", "bowlingPinsFragmentShader.glsl"),
+		model((GLchar*)"bowling_pins.obj"),
+		rect(position, glm::vec3(SCALE, SCALE, SCALE))
+	{}
 
-	Pin() {
-		this->position = glm::vec3(0.0f, 0.0f, 0.0f);
-		this->shader = Shader("bowlingPinsVertexShader.glsl", "bowlingPinsFragmentShader.glsl");
-		this->model = Model((GLchar*)"bowling_pins.obj");
+	void setPosition(glm::vec3 newPosition) {
+		this->position.x += newPosition.x;
+		this->position.y += newPosition.y;
+		this->position.z += newPosition.z;
+
+		this->rect.pos = (this->position);
 	}
 
 	void setProjection(glm::mat4 projection) {
@@ -50,8 +54,8 @@ public:
 
 		glm::mat4 model = glm::mat4(1);
 
-		model = glm::scale(model, glm::vec3(23.0f));
-		model = glm::translate(model, this->position); // Adjust Z so it's behind wall
+		model = glm::translate(model, this->position * SCALE); // Adjust Z so it's behind wall
+		model = glm::scale(model, glm::vec3(SCALE));
 		//model = glm::translate(model, glm::vec3(0.0f, -2.0f, -580.0f)); // Adjust Z so it's behind wall
 
 		glUniformMatrix4fv(glGetUniformLocation(this->shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));

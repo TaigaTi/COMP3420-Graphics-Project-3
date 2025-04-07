@@ -143,6 +143,7 @@
     <ClInclude Include="model.h" />
     <ClInclude Include="Pin.h" />
     <ClInclude Include="Pins.h" />
+    <ClInclude Include="rect.h" />
     <ClInclude Include="shader.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -26,7 +26,7 @@
 using namespace std;
 
 void processInput(GLFWwindow* window);
-
+bool checkForCollisions(Ball, Pins);
 
 // Display Window
 GLFWwindow* window;
@@ -295,13 +295,12 @@ int main(int argc, char* argv[])
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 
-		processInput(window);		
-			// Flush the color buffer
+		processInput(window);
+
+		// Flush the color buffer
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		do_movement(&ball);// Input Processing
-		//cout << "Ball Pos: (" << ballPosition.x << ", " << ballPosition.z << ") | "
-		//	<< "Camera Pos: (" << camera.Position.x << ", " << camera.Position.z << ")" << endl;
-			// Flush the color buffer
+
+		do_movement(&ball); // Input Processing
 	
 		// =======================================================================
 		//  Setup the scene
@@ -399,6 +398,9 @@ int main(int argc, char* argv[])
 		platform.Draw(platformShader);
 
 
+		checkForCollisions(ball, pins); // Check for collisions
+
+
 		// =======================================================================
 		//  Setup the skybox with its matrices
 		// =======================================================================
@@ -433,7 +435,6 @@ int main(int argc, char* argv[])
 		// Swap the front and back buffers
 		glfwSwapBuffers(window);
 	}
-
 
 	// Close the display window
 	glfwDestroyWindow(window);
@@ -478,4 +479,16 @@ void processInput(GLFWwindow* window)
 	// We can handle input in here
 	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
+}
+
+bool checkForCollisions(Ball ball, Pins pins) {
+	bool collisionOccurred = false;
+
+	for (Pin pin : pins.pins) {
+		if (ball.checkCollision(pin.rect) == true) {
+			return true;
+		}
+	}
+
+	return false;
 }

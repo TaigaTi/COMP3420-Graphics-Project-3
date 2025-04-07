@@ -11,6 +11,7 @@
 #include "shader.h"
 #include "camera.h"
 #include "model.h"
+#include "rect.h"
 
 class Ball
 {
@@ -22,12 +23,14 @@ public:
 	glm::vec3 position;
 	Shader shader;
 	Model model;
+	Rect rect;
 
-	Ball() {
-		this->position = glm::vec3(0.0f, 0.0f, 0.0f);
-		this->shader = Shader("ballVertexShader.glsl", "ballFragmentShader.glsl");
-		this->model = Model((GLchar*)"bowling_ball.obj");
-	}
+	Ball()
+		: position(glm::vec3(0.0f, 0.0f, 0.0f)), // Initialize position
+		shader("ballVertexShader.glsl", "ballFragmentShader.glsl"), // Initialize shader
+		model((GLchar*)"bowling_ball.obj"), // Initialize model
+		rect(position, glm::vec3(SCALE, SCALE, SCALE)) // Initialize Rect with position and size
+	{}
 
 	void setProjection(glm::mat4 projection) {
 		this->shader.Use();
@@ -64,6 +67,11 @@ public:
 	void move(int right = 0, int forward = 0, float deltaTime=0.0f) {
 		this->position.x += this->getBallSpeed(deltaTime) * right;
 		this->position.z += this->getBallSpeed(deltaTime) * forward;
+		this->rect.pos = this->position;
+	}
+
+	bool checkCollision(Rect rect) {
+		return this->rect.intersects(rect);
 	}
 
 };

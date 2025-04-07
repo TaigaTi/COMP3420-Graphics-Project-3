@@ -6,15 +6,16 @@
 
 class Pins {
 public:
+    const static int PIN_COUNT = 10;
     std::vector<Pin> pins; // Vector to store Pin objects
 
     // Constructor
     Pins() {}
 
     // Add a Pin to the collection
-    void addPin(const Pin& pin) {
+    /*void addPin(const Pin& pin) {
         pins.push_back(pin);
-    }
+    }*/
 
     // Set Projection Matrix for All Pins
     void setProjection(glm::mat4 projection) {
@@ -40,7 +41,8 @@ public:
         float right2 = 20.0f;
         float right3 = 30.0f;
 
-        glm::vec3 pinPositions[10] = {
+        // Create a triangular formation
+        glm::vec3 pinPositions[PIN_COUNT] = {
             glm::vec3(centerX, floor, centerZ + 20),  // First pin (front row, center)
             glm::vec3(centerX -right1, floor, centerZ + 20), // Second pin (left of first)
             glm::vec3(centerX + right1, floor, centerZ + 20),  // Third pin (right of first)
@@ -56,11 +58,13 @@ public:
         };
 
 
-        // Create a triangular formation
 
-        // Loop through all the pins and draw them
-        for (int i = 0; i < 10; ++i) {
-            pins.push_back(Pin(pinPositions[i])); // 1st row
+        // Store the pins
+        for (int i = 0; i < PIN_COUNT; ++i) {
+            cout << pinPositions[i].x << " " << pinPositions[i].z << endl;
+            Pin pin = Pin();
+            pin.setPosition(pinPositions[i]);
+            pins.push_back(pin); // 1st row
         }
             //pinModel = glm::scale(pinModel, glm::vec3(23.0f)); // Scale the pin uniformly
     }
