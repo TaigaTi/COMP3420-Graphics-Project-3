@@ -23,6 +23,7 @@
 #include "pin.h"
 #include "pins.h"
 #include "boundary.h"
+#include "sound.h"
 
 using namespace std;
 
