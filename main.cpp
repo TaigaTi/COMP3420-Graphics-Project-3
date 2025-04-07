@@ -26,7 +26,7 @@
 using namespace std;
 
 void processInput(GLFWwindow* window);
-bool checkForCollisions(Ball, Pins);
+bool checkForCollisions(Ball*, Pins);
 
 // Display Window
 GLFWwindow* window;
@@ -72,11 +72,11 @@ void do_movement(Ball* ball)
 {
 	if (keys[GLFW_KEY_UP]) {
 		//ballPosition.z -= ballSpeed;
-		isRolling = true;
+		ball->isRolling = true;
 	}
 	if (keys[GLFW_KEY_DOWN]) {
 		//ballPosition.z += ballSpeed;
-		isRolling = false;
+		ball->isRolling = false;
 	}
 	if (keys[GLFW_KEY_LEFT]) {
 		ball->move(-1, 0, deltaTime);
@@ -352,7 +352,7 @@ int main(int argc, char* argv[])
 		//// Draw the ball object
 		//ball.model.Draw(ball.shader);
 
-		if (isRolling == true) {
+		if (ball.isRolling == true) {
 			ball.move(0, -1, deltaTime);
 		}
 
@@ -398,7 +398,7 @@ int main(int argc, char* argv[])
 		platform.Draw(platformShader);
 
 
-		checkForCollisions(ball, pins); // Check for collisions
+		checkForCollisions(&ball, pins); // Check for collisions
 
 
 		// =======================================================================
@@ -481,11 +481,12 @@ void processInput(GLFWwindow* window)
 		glfwSetWindowShouldClose(window, true);
 }
 
-bool checkForCollisions(Ball ball, Pins pins) {
+bool checkForCollisions(Ball* ball, Pins pins) {
 	bool collisionOccurred = false;
 
 	for (Pin pin : pins.pins) {
-		if (ball.checkCollision(pin.rect) == true) {
+		if (ball->checkCollision(pin.rect) == true) {
+			ball->isRolling = false;
 			return true;
 		}
 	}

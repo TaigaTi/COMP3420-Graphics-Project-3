@@ -25,11 +25,14 @@ public:
 	Model model;
 	Rect rect;
 
+	bool isRolling;
+
 	Ball()
 		: position(glm::vec3(0.0f, 0.0f, 0.0f)), // Initialize position
 		shader("ballVertexShader.glsl", "ballFragmentShader.glsl"), // Initialize shader
 		model((GLchar*)"bowling_ball.obj"), // Initialize model
-		rect(position, glm::vec3(SCALE, SCALE, SCALE)) // Initialize Rect with position and size
+		rect(position, glm::vec3(SCALE, SCALE, SCALE)), // Initialize Rect with position and size
+		isRolling(false) // Set the rolling value to false
 	{}
 
 	void setProjection(glm::mat4 projection) {
