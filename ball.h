@@ -20,6 +20,7 @@ class Ball
 public:
 	const float SCALE = 25.0f;
 	const float SPEED = 90.0f;
+	const float BALL_POS_Y = 10.0f;
 
 	glm::vec3 position;
 	Shader shader;
@@ -29,7 +30,7 @@ public:
 	bool isRolling;
 
 	Ball()
-		: position(glm::vec3(0.0f, 0.0f, 0.0f)), // Initialize position
+		: position(glm::vec3(0.0f, BALL_POS_Y, 0.0f)), // Initialize position
 		shader("ballVertexShader.glsl", "ballFragmentShader.glsl"), // Initialize shader
 		model((GLchar*)"bowling_ball.obj"), // Initialize model
 		rect(position, glm::vec3(SCALE, SCALE, SCALE)), // Initialize Rect with position and size
@@ -82,7 +83,7 @@ public:
 	void boundsCheck(Boundary boundary) {
 		if (this->position.z < boundary.back) {
 			this->isRolling = false;
-			setPosition(0, 0, 0);
+			setPosition(0, BALL_POS_Y, 0);
 		}
 		if (this->position.x < boundary.left) {
 			this->position.x = boundary.left;
