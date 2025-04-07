@@ -355,7 +355,7 @@ int main(int argc, char* argv[])
 
 		if (ball.isRolling == true) {
 			ball.move(0, -1, deltaTime);
-			cout << ball.position.z << endl;
+			//ball.rect.display();
 		}
 
 		ball.draw(camera);
@@ -393,8 +393,9 @@ int main(int argc, char* argv[])
 		float platformOffset = 15.0f;
 
 		float backwall = -(platformScale + platformOffset);
+		float side = platformScale / 2.0f;
 
-		Boundary boundary = Boundary(0, 0, 0, backwall);
+		Boundary boundary = Boundary(-side, side - ball.SCALE, 0, backwall);
 
 		platformModel = glm::scale(platformModel, glm::vec3(platformScale));
 		platformModel = glm::translate(platformModel, glm::vec3(0.0f, 0.0f, platformOffset));

@@ -80,9 +80,15 @@ public:
 	}
 
 	void boundsCheck(Boundary boundary) {
-		if (this->position.z <= boundary.back) {
+		if (this->position.z < boundary.back) {
 			this->isRolling = false;
 			setPosition(0, 0, 0);
+		}
+		if (this->position.x < boundary.left) {
+			this->position.x = boundary.left;
+		}
+		if (this->position.x > boundary.right) {
+			this->position.x = boundary.right;
 		}
 	}
 
