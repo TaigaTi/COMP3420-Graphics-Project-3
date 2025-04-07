@@ -1,5 +1,4 @@
 #pragma once
-// class eRect haha. Funny.
 // This class will represent a rectangular collision box.
 
 #include <glm/glm.hpp>

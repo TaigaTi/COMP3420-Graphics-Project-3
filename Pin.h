@@ -7,7 +7,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 
-// Our Includes
+// Local Includes
 #include "shader.h"
 #include "camera.h"
 #include "model.h"
@@ -70,7 +70,6 @@ public:
 		glUniformMatrix4fv(glGetUniformLocation(this->shader.Program, "view"), 1, GL_FALSE, glm::value_ptr(camera.GetViewMatrix()));
 
 		// Setup Model Matrix
-
 		glm::mat4 model = glm::mat4(1);
 
 		model = glm::translate(model, this->position * SCALE); // Adjust Z so it's behind wall
@@ -78,14 +77,14 @@ public:
 			// Do some funky falling animation. :D
 		}
 		else {
-			// Play "I'm a wiggly Bowling Pin"
+			// Play wiggle animation
 			model = glm::rotate(model, (float)glfwGetTime() * 5, glm::vec3(0.05f, 1.0f, 0.0f));
 		}
 		model = glm::scale(model, glm::vec3(SCALE));
 
 		glUniformMatrix4fv(glGetUniformLocation(this->shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 
-		// Textures
+		// Add textures
 		glUniform1i(glGetUniformLocation(this->shader.Program, "texture_diffuse1"), 0);
 
 		this->model.Draw(this->shader);
