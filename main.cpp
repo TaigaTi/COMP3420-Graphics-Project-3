@@ -39,19 +39,18 @@ GLuint loadCubeMap(vector<std::string>);
 
 // Camera
 Camera camera(glm::vec3(0.0f, 1000.0f, 1500.0f)); 
-// Process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 
-// Ball INFO
+// Ball Properties
 const float BALL_SCALE = 25.0f;
 const float BALL_BASE_SPEED = 29.0f;
 bool isRolling = false;
-glm::vec3 ballPosition = glm::vec3(0.0f, 0.0f, 0.0f);
+glm::vec3 ballPosition = glm::vec3(0.0f, 0.0f, 200.0f);
 
-// Movement flags and speed
+// Movement Flags and Speed
 bool keys[1024];
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
-float movementSpeed = 200.0f; // Adjust this for faster/slower movement
+float movementSpeed = 220.0f; // Adjust this for faster/slower movement
 
 // Keyboard callback to track key presses
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
@@ -72,20 +71,16 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 void do_movement(Ball* ball)
 {
 	if (keys[GLFW_KEY_UP]) {
-		//ballPosition.z -= ballSpeed;
 		ball->isRolling = true;
 	}
 	if (keys[GLFW_KEY_DOWN]) {
-		//ballPosition.z += ballSpeed;
 		ball->isRolling = false;
 	}
 	if (keys[GLFW_KEY_LEFT]) {
 		ball->move(-1, 0, deltaTime);
-		//ballPosition.x -= ballSpeed;
 	}
 	if (keys[GLFW_KEY_RIGHT]) {
 		ball->move(1, 0, deltaTime);
-		//ballPosition.x += ballSpeed;
 	}
 	// Camera movement
 	if (keys[GLFW_KEY_UP])
@@ -164,7 +159,6 @@ void init() {
 	glEnable(GL_DEPTH_TEST);
 
 	// Set viewport size
-	// This makes the bottom left be 0, 0
 	glViewport(0, 0, sWidth, sHeight);
 }
 
@@ -181,19 +175,14 @@ int main(int argc, char* argv[])
 	glfwSetKeyCallback(window, key_callback);
 
 	// Setup and compile shaders
-	//Shader ball.shader("ballVertexShader.glsl", "ballFragmentShader.glsl");
 	Shader skyboxShader("skyboxVertexShader.glsl", "skyboxFragmentShader.glsl");
 	Shader cubeShader("cubeMapVertexShader.glsl", "cubeMapFragmentShader.glsl");
-	//Shader pin.shader("bowlingPinsVertexShader.glsl", "bowlingPinsFragmentShader.glsl");
 	Shader platformShader("platformVertexShader.glsl", "platformFragmentShader.glsl");
 
-	// Load the bowling ball model object
-	//Model bowlingBall((GLchar*)"bowling_ball.obj");
+	// Load the platform model object
 	Model platform((GLchar*)"platform.obj");
-	//Model bowlingPins((GLchar*)"bowling_pins.obj");
 
 	Ball ball = Ball();
-	//Pin pin = Pin();
 	Pins pins = Pins();
 
 	pins.initializeDefaultPins();
@@ -278,14 +267,9 @@ int main(int argc, char* argv[])
 	// =======================================================================
 	glm::mat4 projection = glm::perspective(45.0f, (GLfloat)sWidth / (GLfloat)sHeight, 0.1f, 50000.0f);
 	ball.setProjection(projection);
-	/*ball.shader.Use();
-	glUniformMatrix4fv(glGetUniformLocation(ball.shader.Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));*/
 	platformShader.Use();
 	glUniformMatrix4fv(glGetUniformLocation(platformShader.Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-	//pin.setProjection(projection);
 	pins.setProjection(projection);
-	/*pin.shader.Use();
-	glUniformMatrix4fv(glGetUniformLocation(pin.shader.Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));*/
 
 
 	// Keep displaying the window until we have shut it down
@@ -323,63 +307,21 @@ int main(int argc, char* argv[])
 
 		glUniform3f(glGetUniformLocation(cubeShader.Program, "cameraPos"), camera.Position.x, camera.Position.y, camera.Position.z);
 
-		// Create the view matrices
-
+		// =======================================================================
+		//  Create view matrices
+		// =======================================================================
 		platformShader.Use();
 		glUniformMatrix4fv(glGetUniformLocation(platformShader.Program, "view"), 1, GL_FALSE, glm::value_ptr(camera.GetViewMatrix()));
 
-		/*pin.shader.Use();
-		glUniformMatrix4fv(glGetUniformLocation(pin.shader.Program, "view"), 1, GL_FALSE, glm::value_ptr(camera.GetViewMatrix()));*/
 
-		// Do Ball Rendering
-		//ball.shader.Use();
-		//glUniformMatrix4fv(glGetUniformLocation(ball.shader.Program, "view"), 1, GL_FALSE, glm::value_ptr(camera.GetViewMatrix()));
-
-		//// =======================================================================
-		////  Create ball model matrix
-		//// =======================================================================
-		//ball.shader.Use();
-		//glm::mat4 ballModel = glm::mat4(1);
-
-		//ballModel = glm::translate(ballModel, ballPosition * SCALE);
-		//ballModel = glm::rotate(ballModel, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-		//ballModel = glm::rotate(ballModel, (float)glfwGetTime() * 10, glm::vec3(0.0f, 0.0f, -1.0f));
-		//ballModel = glm::scale(ballModel, glm::vec3(SCALE));
-
-		//// Pass the ball model matrix to the shader as "model"
-		//glUniformMatrix4fv(glGetUniformLocation(ball.shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(ballModel));
-		//glUniform1i(glGetUniformLocation(ball.shader.Program, "texture_diffuse1"), 0);
-
-		//// Draw the ball object
-		//ball.model.Draw(ball.shader);
-
+		// =======================================================================
+		//  Draw the bowling ball and pins
+		// =======================================================================
 		if (ball.isRolling == true) {
 			ball.move(0, -1, deltaTime);
-			//ball.rect.display();
 		}
 
 		ball.draw(camera);
-
-
-		// Draw bowling pins
-		//pin.shader.Use();
-
-		// =======================================================================
-		//  Create bowling pins model matrix
-		// =======================================================================
-		//pin.shader.Use();
-		//glm::mat4 pinsModel = glm::mat4(1.0f);
-
-		//pinsModel = glm::scale(pinsModel, glm::vec3(20.0f));
-		//pinsModel = glm::translate(pinsModel, glm::vec3(0.0f, -2.0f, -580.0f)); // adjust Z so it's behind the ball
-
-		//glUniformMatrix4fv(glGetUniformLocation(pin.shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(pinsModel));
-		//glUniform1i(glGetUniformLocation(pin.shader.Program, "texture_diffuse1"), 0);
-
-		// Draw pins
-		//pin.model.Draw(pin.shader);
-		
-		//pin.draw(camera);
 		pins.draw(camera);
 
 
@@ -408,9 +350,13 @@ int main(int argc, char* argv[])
 		// Draw the platform object
 		platform.Draw(platformShader);
 
-		checkForCollisions(&ball, &pins); // Check for collisions
+		// =======================================================================
+		//  Check for collisions
+		// =======================================================================
+		checkForCollisions(&ball, &pins);
 		ball.boundsCheck(boundary);
 
+		// Reset the pins
 		pins.fall(deltaTime);
 
 		// =======================================================================
@@ -486,13 +432,14 @@ GLuint loadCubeMap(std::vector<std::string> faces)
 	return textureID;
 }
 
+// Processes mouse and keyboard input
 void processInput(GLFWwindow* window)
 {
-	// We can handle input in here
 	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 }
 
+// Checks for collisions between the ball and pins
 bool checkForCollisions(Ball* ball, Pins* pins) {
 	bool collisionOccurred = false;
 
