@@ -8,6 +8,7 @@ class Pins {
 public:
     const static int PIN_COUNT = 10;
     std::vector<Pin> pins; // Vector to store Pin objects
+    Sound sound = Sound("strike_sound.wav", 70.0f, glm::vec3(0));
 
     // Constructor
     Pins() {}
@@ -67,7 +68,7 @@ public:
 
         // Store the pins
         for (int i = 0; i < PIN_COUNT; ++i) {
-            Pin pin = Pin();
+            Pin pin = Pin(this->sound);
             pin.setPosition(pinPositions[i]);
             pins.push_back(pin); // 1st row
         }

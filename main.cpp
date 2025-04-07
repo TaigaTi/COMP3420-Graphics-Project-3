@@ -15,6 +15,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <cstdlib>
 #include <iostream>
+#include <SFML/Audio.hpp>
 
 #include "camera.h"
 #include "shader.h"
@@ -23,6 +24,7 @@
 #include "pin.h"
 #include "pins.h"
 #include "boundary.h"
+#include "sound.h"
 
 using namespace std;
 
@@ -183,6 +185,7 @@ int main(int argc, char* argv[])
 	Model platform((GLchar*)"platform.obj");
 
 	Ball ball = Ball();
+
 	Pins pins = Pins();
 
 	pins.initializeDefaultPins(0.0, 0.0, 0.0);
@@ -273,6 +276,26 @@ int main(int argc, char* argv[])
 	glUniformMatrix4fv(glGetUniformLocation(platformShader.Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 	pins.setProjection(projection);
 
+	sf::Music music;
+	music.openFromFile("music.ogg");
+
+	music.setVolume(60.0f);
+
+	music.play();
+
+
+	/*sf::Sound sound;
+	sf::SoundBuffer buffer;
+
+	buffer.loadFromFile("strike_sound.wav");
+
+	sound.setBuffer(buffer);
+	sound.setVolume(100.0f);
+	sound.setPosition(0, 0, 0);
+	sound.play();*/
+
+	//Sound sound = Sound("strike_sound.wav", 100.0f, glm::vec3(0));
+	//sound.play();
 
 	// Keep displaying the window until we have shut it down
 	while (!glfwWindowShouldClose(window))
@@ -396,6 +419,8 @@ int main(int argc, char* argv[])
 		glfwSwapBuffers(window);
 	}
 
+	music.stop();
+
 	// Close the display window
 	glfwDestroyWindow(window);
 
@@ -447,10 +472,10 @@ bool checkForCollisions(Ball* ball, Pins* pins) {
 
 	for (Pin& pin : pins->pins) {
 		if (ball->checkCollision(pin.rect) == true) {
-			pin.move(glm::vec3(0, 50, 0));
-			return true;
+			pin.launch();
+			collisionOccurred = true;
 		}
 	}
 
-	return false;
+	return collisionOccurred;
 }
