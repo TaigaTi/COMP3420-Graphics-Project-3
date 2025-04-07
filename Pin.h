@@ -12,6 +12,7 @@
 #include "camera.h"
 #include "model.h"
 #include "rect.h"
+#include "sound.h"
 
 class Pin
 {
@@ -19,23 +20,33 @@ class Pin
 public:
 	const float SCALE = 23.0f;
 	const float FALL_SPEED = 14.0f;
+	const float LAUNCH_HEIGHT = 50.0f;
 
 	glm::vec3 position;
 	Shader shader;
 	Model model;
 	Rect rect;
+	Sound sound;
 
-	Pin()
+	Pin(Sound sound)
 		: position(glm::vec3(0.0f, 0.0f, 0.0f)),
 		shader("bowlingPinsVertexShader.glsl", "bowlingPinsFragmentShader.glsl"),
 		model((GLchar*)"bowling_pins.obj"),
-		rect(position, glm::vec3(SCALE, SCALE, SCALE))
+		rect(position, glm::vec3(SCALE, SCALE, SCALE)),
+		sound(sound)
 	{
 	}
 
 	void setPosition(glm::vec3 newPosition) {
 		this->position = newPosition;
 		this->rect.pos = (this->position);
+		this->sound.setPosition(newPosition);
+	}
+
+	void launch() {
+		this->move(glm::vec3(0, this->LAUNCH_HEIGHT, 0));
+		this->sound.play();
+		//this->sound.displaySoundInfo();
 	}
 
 	void move(glm::vec3 offset) {
@@ -44,6 +55,8 @@ public:
 		this->position.z += offset.z;
 
 		this->rect.pos = (this->position);
+		this->sound.setPosition(position);
+
 	}
 
 	bool isFalling() {
