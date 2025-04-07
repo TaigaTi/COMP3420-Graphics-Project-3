@@ -185,7 +185,9 @@ int main(int argc, char* argv[])
 	Ball ball = Ball();
 	Pins pins = Pins();
 
-	pins.initializeDefaultPins();
+	pins.initializeDefaultPins(0.0, 0.0, 0.0);
+	pins.initializeDefaultPins(175.0, 0.0, 0.0);
+	pins.initializeDefaultPins(-175.0, 0.0, 0.0);
 
 	// Define bowling skybox vertices
 	GLfloat skyboxVertices[] =

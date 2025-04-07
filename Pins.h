@@ -40,9 +40,9 @@ public:
     }
 
     // Initialize a Default Pin Layout (optional, to create a bowling formation)
-    void initializeDefaultPins() {
-        float centerX = 0.0f; // Base X position
-        float centerZ = -380.0f; // Base Z position
+    void initializeDefaultPins(float xOffset, float yOffset, float zOffset) {
+        float centerX = 0.0f + xOffset; // Base X position
+        float centerZ = -380.0f + zOffset; // Base Z position
         float floor = -2.0f;
 
         float right1 = 10.0f;
