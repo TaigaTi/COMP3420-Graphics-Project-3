@@ -274,6 +274,9 @@ int main(int argc, char* argv[])
 	glUniformMatrix4fv(glGetUniformLocation(platformShader.Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 	pins.setProjection(projection);
 
+	sf::Music music;
+	music.openFromFile("music.ogg");
+	music.play();
 
 	// Keep displaying the window until we have shut it down
 	while (!glfwWindowShouldClose(window))
@@ -396,6 +399,8 @@ int main(int argc, char* argv[])
 		// Swap the front and back buffers
 		glfwSwapBuffers(window);
 	}
+
+	music.stop();
 
 	// Close the display window
 	glfwDestroyWindow(window);
