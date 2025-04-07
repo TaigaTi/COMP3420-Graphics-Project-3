@@ -18,7 +18,7 @@ class Ball
 
 public:
 	const float SCALE = 25.0f;
-	const float SPEED = 29.0f;
+	const float SPEED = 90.0f;
 
 	glm::vec3 position;
 	Shader shader;
