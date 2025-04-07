@@ -13,9 +13,8 @@ public:
 
     // Constructor with position and size
     Rect(const glm::vec3& position, glm::vec3 size)
-        : pos(position), size(size) {
-        cout << "I've been initialized with: " << position.x << position.y << position.z << endl;
-    }
+        : pos(position), size(size) 
+    {}
 
     bool intersects(const Rect& other) const {
         return (pos.x < other.pos.x + other.size.x &&

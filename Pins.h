@@ -31,6 +31,14 @@ public:
         }
     }
 
+    // Make all pins stay on the ground!
+
+    void fall(float deltaTime) {
+        for (Pin& pin : pins) {
+            pin.fall(deltaTime);
+        }
+    }
+
     // Initialize a Default Pin Layout (optional, to create a bowling formation)
     void initializeDefaultPins() {
         float centerX = 0.0f; // Base X position
@@ -59,7 +67,6 @@ public:
 
         // Store the pins
         for (int i = 0; i < PIN_COUNT; ++i) {
-            cout << pinPositions[i].x << " " << pinPositions[i].z << endl;
             Pin pin = Pin();
             pin.setPosition(pinPositions[i]);
             pins.push_back(pin); // 1st row

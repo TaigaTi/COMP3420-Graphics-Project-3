@@ -18,6 +18,7 @@ class Pin
 
 public:
 	const float SCALE = 23.0f;
+	const float FALL_SPEED = 14.0f;
 
 	glm::vec3 position;
 	Shader shader;
@@ -42,6 +43,14 @@ public:
 		this->position.z += offset.z;
 
 		this->rect.pos = (this->position);
+	}
+
+	void fall(float deltaTime) {
+		// If pin is in the air, make it fall!
+
+		if (this->position.y >= 0.2f) {
+			move(glm::vec3(0, -FALL_SPEED, 0) * deltaTime);
+		}
 	}
 
 	void setProjection(glm::mat4 projection) {

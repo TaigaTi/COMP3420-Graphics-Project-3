@@ -400,6 +400,7 @@ int main(int argc, char* argv[])
 
 		checkForCollisions(&ball, &pins); // Check for collisions
 
+		pins.fall(deltaTime);
 
 		// =======================================================================
 		//  Setup the skybox with its matrices
