@@ -88,6 +88,7 @@ public:
 		model = glm::translate(model, this->position * SCALE); // Adjust Z so it's behind wall
 		if (isFalling()) {
 			// Do some funky falling animation. :D
+			model = glm::rotate(model, (float)glfwGetTime() * 20, glm::vec3(-1.0f, 0.0f, 0.0f));
 		}
 		else {
 			// Play wiggle animation
