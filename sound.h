@@ -4,13 +4,13 @@
 
 // This class will be responsible for managing sound and music 
 class Sound {
-
+public:
 	char* path;
 	float volume;
 	glm::vec3 position;
 	sf::Sound sound;
 
-	Sound(char* path, float volume, glm::vec3 position, bool loop=false) {
+	Sound(const char* path, float volume, glm::vec3 position, bool loop=false) {
 		sf::SoundBuffer buffer;
 		buffer.loadFromFile(path);
 
