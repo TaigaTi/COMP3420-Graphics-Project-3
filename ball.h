@@ -12,6 +12,7 @@
 #include "camera.h"
 #include "model.h"
 #include "rect.h"
+#include "boundary.h"
 
 class Ball
 {
@@ -71,6 +72,18 @@ public:
 		this->position.x += this->getBallSpeed(deltaTime) * right;
 		this->position.z += this->getBallSpeed(deltaTime) * forward;
 		this->rect.pos = this->position;
+	}
+
+	void setPosition(float x, float y, float z) {
+		this->position = glm::vec3(x, y, z);
+		this->rect.pos = this->position;
+	}
+
+	void boundsCheck(Boundary boundary) {
+		if (this->position.z <= boundary.back) {
+			this->isRolling = false;
+			setPosition(0, 0, 0);
+		}
 	}
 
 	bool checkCollision(Rect rect) {

@@ -22,6 +22,7 @@
 #include "ball.h"
 #include "pin.h"
 #include "pins.h"
+#include "boundary.h"
 
 using namespace std;
 
@@ -354,6 +355,7 @@ int main(int argc, char* argv[])
 
 		if (ball.isRolling == true) {
 			ball.move(0, -1, deltaTime);
+			cout << ball.position.z << endl;
 		}
 
 		ball.draw(camera);
@@ -369,7 +371,7 @@ int main(int argc, char* argv[])
 		//glm::mat4 pinsModel = glm::mat4(1.0f);
 
 		//pinsModel = glm::scale(pinsModel, glm::vec3(20.0f));
-		//pinsModel = glm::translate(pinsModel, glm::vec3(0.0f, -2.0f, -580.0f)); // adjust Z so it?s behind the ball
+		//pinsModel = glm::translate(pinsModel, glm::vec3(0.0f, -2.0f, -580.0f)); // adjust Z so it's behind the ball
 
 		//glUniformMatrix4fv(glGetUniformLocation(pin.shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(pinsModel));
 		//glUniform1i(glGetUniformLocation(pin.shader.Program, "texture_diffuse1"), 0);
@@ -387,8 +389,16 @@ int main(int argc, char* argv[])
 		platformShader.Use();
 		glm::mat4 platformModel = glm::mat4(1);
 
-		platformModel = glm::scale(platformModel, glm::vec3(500.0f));
-		platformModel = glm::translate(platformModel, glm::vec3(0.0f, 0.0f, 15.0f));
+		float platformScale = 500.0f;
+		float platformOffset = 15.0f;
+
+		float backwall = -(platformScale + platformOffset);
+
+		Boundary boundary = Boundary(0, 0, 0, backwall);
+
+		platformModel = glm::scale(platformModel, glm::vec3(platformScale));
+		platformModel = glm::translate(platformModel, glm::vec3(0.0f, 0.0f, platformOffset));
+
 
 		// Pass the platform model matrix to the shader as "model"
 		glUniformMatrix4fv(glGetUniformLocation(platformShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(platformModel));
@@ -397,8 +407,8 @@ int main(int argc, char* argv[])
 		// Draw the platform object
 		platform.Draw(platformShader);
 
-
 		checkForCollisions(&ball, &pins); // Check for collisions
+		ball.boundsCheck(boundary);
 
 		pins.fall(deltaTime);
 
