@@ -26,7 +26,7 @@
 using namespace std;
 
 void processInput(GLFWwindow* window);
-bool checkForCollisions(Ball*, Pins);
+bool checkForCollisions(Ball*, Pins*);
 
 // Display Window
 GLFWwindow* window;
@@ -398,7 +398,7 @@ int main(int argc, char* argv[])
 		platform.Draw(platformShader);
 
 
-		checkForCollisions(&ball, pins); // Check for collisions
+		checkForCollisions(&ball, &pins); // Check for collisions
 
 
 		// =======================================================================
@@ -481,12 +481,12 @@ void processInput(GLFWwindow* window)
 		glfwSetWindowShouldClose(window, true);
 }
 
-bool checkForCollisions(Ball* ball, Pins pins) {
+bool checkForCollisions(Ball* ball, Pins* pins) {
 	bool collisionOccurred = false;
 
-	for (Pin pin : pins.pins) {
+	for (Pin& pin : pins->pins) {
 		if (ball->checkCollision(pin.rect) == true) {
-			ball->isRolling = false;
+			pin.move(glm::vec3(0, 50, 0));
 			return true;
 		}
 	}

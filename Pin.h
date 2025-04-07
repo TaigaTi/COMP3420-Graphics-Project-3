@@ -32,9 +32,14 @@ public:
 	{}
 
 	void setPosition(glm::vec3 newPosition) {
-		this->position.x += newPosition.x;
-		this->position.y += newPosition.y;
-		this->position.z += newPosition.z;
+		this->position = newPosition;
+		this->rect.pos = (this->position);
+	}
+
+	void move(glm::vec3 offset) {
+		this->position.x += offset.x;
+		this->position.y += offset.y;
+		this->position.z += offset.z;
 
 		this->rect.pos = (this->position);
 	}

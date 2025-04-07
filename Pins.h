@@ -57,8 +57,6 @@ public:
             glm::vec3(centerX + right3, floor, centerZ - 20),  // Tenth pin (right of third)
         };
 
-
-
         // Store the pins
         for (int i = 0; i < PIN_COUNT; ++i) {
             cout << pinPositions[i].x << " " << pinPositions[i].z << endl;
@@ -66,6 +64,5 @@ public:
             pin.setPosition(pinPositions[i]);
             pins.push_back(pin); // 1st row
         }
-            //pinModel = glm::scale(pinModel, glm::vec3(23.0f)); // Scale the pin uniformly
     }
 };
