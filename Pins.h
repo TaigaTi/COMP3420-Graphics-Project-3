@@ -37,6 +37,7 @@ public:
     void fall(float deltaTime) {
         for (Pin& pin : pins) {
             pin.fall(deltaTime);
+            pin.updateResetTimer();
         }
     }
 
