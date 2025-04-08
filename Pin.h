@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <chrono>
 
 // Local Includes
 #include "shader.h"
@@ -23,6 +24,10 @@ public:
 	float fallRotationAngle = 0.0f;             // Angle for simulating fall rotation
 	bool hasFallen = false;                     // Whether the pin has fallen completely
 	bool isLaunched = false;                    // Whether the pin has been hit/launched
+	bool awaitingReset = false;					// Whether the pin is waiting to be reset
+	float resetDelaySeconds = 2.0f;				// Delay in seconds before the pin resets
+
+	std::chrono::high_resolution_clock::time_point fallEndTime; // Time when the pin falls
 
 	glm::vec3 position;                         // Current position
 	glm::vec3 originalPosition;                 // Original standing position
@@ -102,8 +107,9 @@ public:
 				velocity = glm::vec3(0.0f);
 				hasFallen = true;
 
-				// Reset pin back to original position after fall ends
-				resetToOriginalPosition();
+				// Start reset timer to check delay before resetting pin
+				awaitingReset = true;
+				fallEndTime = std::chrono::high_resolution_clock::now();
 			}
 		}
 
@@ -113,6 +119,20 @@ public:
 		}
 		else {
 			fallRotationAngle = glm::radians(90.0f); // Cap rotation
+		}
+	}
+
+	// Checks and performs reset of the pin to original position
+	void updateResetTimer() {
+		if (awaitingReset) {
+			auto now = std::chrono::high_resolution_clock::now();
+			float elapsed = std::chrono::duration<float>(now - fallEndTime).count();
+
+			// Reset pin back to original position after delay
+			if (elapsed >= resetDelaySeconds) {
+				resetToOriginalPosition();
+				awaitingReset = false;
+			}
 		}
 	}
 
@@ -145,7 +165,7 @@ public:
 		model = glm::translate(model, glm::vec3(0.0f, 1.0f * SCALE, 0.0f));
 
 		// Rotate the model if it is falling, otherwise idle animation
-		if (isFalling()) {
+		if (isFalling() || awaitingReset) {
 			model = glm::rotate(model, fallRotationAngle, fallDirection);
 		}
 		else {
