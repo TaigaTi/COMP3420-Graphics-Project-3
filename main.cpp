@@ -472,7 +472,14 @@ bool checkForCollisions(Ball* ball, Pins* pins) {
 
 	for (Pin& pin : pins->pins) {
 		if (ball->checkCollision(pin.rect) == true) {
-			pin.launch();
+			glm::vec3 direction = pin.position - ball->position;
+			direction.y = 0.0f; // Ignore vertical component
+			if (glm::length(direction) != 0.0f) {
+				direction = glm::normalize(direction);
+			}
+
+			// Apply directional fall
+			pin.launch(direction);
 			collisionOccurred = true;
 		}
 	}

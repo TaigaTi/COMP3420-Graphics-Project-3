@@ -6,7 +6,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-
 // Local Includes
 #include "shader.h"
 #include "camera.h"
@@ -16,13 +15,20 @@
 
 class Pin
 {
-
 public:
 	const float SCALE = 23.0f;
-	const float FALL_SPEED = 14.0f;
-	const float LAUNCH_HEIGHT = 50.0f;
+	const float GRAVITY = 9.8f;
+	const float BOUNCE_DAMPING = 0.6f;
+	float fallRotationAngle = 0.0f;
+	bool hasFallen = false;
+	bool isLaunched = false;
 
 	glm::vec3 position;
+	glm::vec3 originalPosition;
+	glm::vec3 velocity = glm::vec3(0.0f);
+	glm::vec3 acceleration = glm::vec3(0.0f, -GRAVITY, 0.0f);
+	glm::vec3 fallDirection = glm::vec3(1.0f, 0.0f, 0.0f);
+
 	Shader shader;
 	Model model;
 	Rect rect;
@@ -30,6 +36,7 @@ public:
 
 	Pin(Sound sound)
 		: position(glm::vec3(0.0f, 0.0f, 0.0f)),
+		originalPosition(glm::vec3(0.0f, 0.0f, 0.0f)),
 		shader("bowlingPinsVertexShader.glsl", "bowlingPinsFragmentShader.glsl"),
 		model((GLchar*)"bowling_pins.obj"),
 		rect(position, glm::vec3(SCALE, SCALE, SCALE)),
@@ -39,36 +46,77 @@ public:
 
 	void setPosition(glm::vec3 newPosition) {
 		this->position = newPosition;
-		this->rect.pos = (this->position);
+		this->originalPosition = newPosition;
+		this->rect.pos = this->position;
 		this->sound.setPosition(newPosition);
 	}
 
-	void launch() {
-		this->move(glm::vec3(0, this->LAUNCH_HEIGHT, 0));
+	void launch(glm::vec3 hitDirection) {
+		this->fallRotationAngle = 0.0f;
+		this->hasFallen = false;
+		this->isLaunched = true;
+
+		// Normalize the hit direction
+		glm::vec3 normalizedHit = glm::normalize(hitDirection);
+
+		// Compute fall rotation axis (cross with up vector to get perpendicular)
+		this->fallDirection = normalizedHit; // fall direction aligns with hit direction
+
+		// Launch velocity includes upward + hit direction
+		this->velocity = normalizedHit * 20.0f + glm::vec3(0.0f, 1.0f, 0.0f);
+
 		this->sound.play();
-		//this->sound.displaySoundInfo();
 	}
 
+
 	void move(glm::vec3 offset) {
-		this->position.x += offset.x;
-		this->position.y += offset.y;
-		this->position.z += offset.z;
-
-		this->rect.pos = (this->position);
+		this->position += offset;
+		this->rect.pos = this->position;
 		this->sound.setPosition(position);
-
 	}
 
 	bool isFalling() {
-		return this->position.y >= 0.2f;
+		return this->isLaunched && !hasFallen;
 	}
 
 	void fall(float deltaTime) {
-		// If pin is in the air, make it fall!
+		if (!isFalling()) return;
 
-		if (isFalling()) {
-			move(glm::vec3(0, -FALL_SPEED, 0) * deltaTime);
+		velocity += acceleration * deltaTime;
+		move(velocity * deltaTime);
+
+		// bounce check
+		if (position.y <= 0.0f) {
+			position.y = 0.0f;
+			velocity.y *= -BOUNCE_DAMPING;
+
+			// if bounce is too small, stop
+			if (abs(velocity.y) < 0.5f) {
+				velocity = glm::vec3(0.0f);
+				hasFallen = true;
+
+				// Auto-reset to original position after fall
+				resetToOriginalPosition();
+			}
 		}
+
+		// Slowly increase fall rotation (max ~90 degrees)
+		if (fallRotationAngle < glm::radians(90.0f)) {
+			fallRotationAngle += glm::radians(300.0f) * deltaTime; // 60 degrees/sec
+		}
+		else {
+			fallRotationAngle = glm::radians(90.0f);
+		}
+	}
+
+	void resetToOriginalPosition() {
+		this->position = originalPosition;
+		this->rect.pos = originalPosition;
+		this->sound.setPosition(originalPosition);
+		this->fallRotationAngle = 0.0f;
+		this->velocity = glm::vec3(0.0f);
+		this->isLaunched = false;
+		this->hasFallen = false;
 	}
 
 	void setProjection(glm::mat4 projection) {
@@ -78,30 +126,24 @@ public:
 
 	void draw(Camera camera) {
 		this->shader.Use();
-
-		// Setup View Matrix
 		glUniformMatrix4fv(glGetUniformLocation(this->shader.Program, "view"), 1, GL_FALSE, glm::value_ptr(camera.GetViewMatrix()));
 
-		// Setup Model Matrix
 		glm::mat4 model = glm::mat4(1);
+		model = glm::translate(model, this->position * SCALE);
+		model = glm::translate(model, glm::vec3(0.0f, 1.0f * SCALE, 0.0f));
 
-		model = glm::translate(model, this->position * SCALE); // Adjust Z so it's behind wall
 		if (isFalling()) {
-			// Do some funky falling animation. :D
-			model = glm::rotate(model, (float)glfwGetTime() * 20, glm::vec3(-1.0f, 0.0f, 0.0f));
+			model = glm::rotate(model, fallRotationAngle, fallDirection);
 		}
 		else {
-			// Play wiggle animation
 			model = glm::rotate(model, (float)glfwGetTime() * 5, glm::vec3(0.05f, 1.0f, 0.0f));
 		}
+
+		model = glm::translate(model, glm::vec3(0.0f, 0.5f * SCALE, 0.0f));
 		model = glm::scale(model, glm::vec3(SCALE));
 
 		glUniformMatrix4fv(glGetUniformLocation(this->shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-
-		// Add textures
 		glUniform1i(glGetUniformLocation(this->shader.Program, "texture_diffuse1"), 0);
-
 		this->model.Draw(this->shader);
 	}
-
 };
