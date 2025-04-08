@@ -145,6 +145,7 @@
     <ClInclude Include="Pin.h" />
     <ClInclude Include="Pins.h" />
     <ClInclude Include="rect.h" />
+    <ClInclude Include="score.h" />
     <ClInclude Include="shader.h" />
     <ClInclude Include="sound.h" />
   </ItemGroup>

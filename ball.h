@@ -80,10 +80,11 @@ public:
 		this->rect.pos = this->position;
 	}
 
-	void boundsCheck(Boundary boundary) {
+	bool boundsCheck(Boundary boundary) {
 		if (this->position.z < boundary.back) {
 			this->isRolling = false;
 			setPosition(0, BALL_POS_Y, 0);
+			return true;
 		}
 		if (this->position.x < boundary.left) {
 			this->position.x = boundary.left;
@@ -91,6 +92,7 @@ public:
 		if (this->position.x > boundary.right) {
 			this->position.x = boundary.right;
 		}
+		return false;
 	}
 
 	bool checkCollision(Rect rect) {

@@ -25,6 +25,7 @@
 #include "pins.h"
 #include "boundary.h"
 #include "sound.h"
+#include "score.h"
 
 using namespace std;
 
@@ -42,11 +43,7 @@ GLuint loadCubeMap(vector<std::string>);
 // Camera
 Camera camera(glm::vec3(0.0f, 1000.0f, 1500.0f)); 
 
-// Ball Properties
-const float BALL_SCALE = 25.0f;
-const float BALL_BASE_SPEED = 29.0f;
-bool isRolling = false;
-glm::vec3 ballPosition = glm::vec3(0.0f, 0.0f, 200.0f);
+Score score = Score();
 
 // Movement Flags and Speed
 bool keys[1024];
@@ -170,7 +167,7 @@ int main(int argc, char* argv[])
 	init();
 
 
-	glm::vec3 cameraOffset = camera.Position - ballPosition;
+	glm::vec3 cameraOffset = camera.Position - glm::vec3(0);
 	//Camera movement via mouse callback set
 	glfwSetCursorPosCallback(window, camera_view_callback);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -379,7 +376,10 @@ int main(int argc, char* argv[])
 		//  Check for collisions
 		// =======================================================================
 		checkForCollisions(&ball, &pins);
-		ball.boundsCheck(boundary);
+
+		if (ball.boundsCheck(boundary)) {
+			score.resetScore();
+		}
 
 		// Reset the pins
 		pins.fall(deltaTime);
@@ -473,6 +473,7 @@ bool checkForCollisions(Ball* ball, Pins* pins) {
 	for (Pin& pin : pins->pins) {
 		if (ball->checkCollision(pin.rect) == true) {
 			pin.launch();
+			score.incrScore();
 			collisionOccurred = true;
 		}
 	}

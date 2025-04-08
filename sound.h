@@ -5,6 +5,7 @@
 // This class will be responsible for managing sound and music 
 class Sound {
 public:
+
 	char* path;
 	float volume;
 	glm::vec3 position;
@@ -12,7 +13,12 @@ public:
 	sf::Sound sound;
 
 	Sound(const char* path, float volume, glm::vec3 position, bool loop=false) {
-		this->buffer.loadFromFile(path);
+		if (!this->buffer.loadFromFile(path)) {
+			std::cerr << "Failed to load sound file: " << path << std::endl;
+			exit(-1);
+		}
+
+		cout << "Loaded " << path << endl;
 
 		sound.setBuffer(buffer);
 
@@ -37,6 +43,7 @@ public:
 	}
 
 	void displaySoundInfo() {
+		std::cout << buffer.getDuration().asSeconds() << endl;
 		std::cout << "Sound Status: " << sound.getStatus() << std::endl;
 		std::cout << "Volume: " << sound.getVolume() << std::endl;
 		std::cout << "Position: (" << sound.getPosition().x << sound.getPosition().y << sound.getPosition().z << ")" << std::endl;
