@@ -47,12 +47,12 @@ const float BALL_SCALE = 25.0f;
 const float BALL_BASE_SPEED = 29.0f;
 bool isRolling = false;
 glm::vec3 ballPosition = glm::vec3(0.0f, 0.0f, 200.0f);
-
+bool isRightMouseDown = false;
 // Movement Flags and Speed
 bool keys[1024];
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
-float movementSpeed = 220.0f; // Adjust this for faster/slower movement
+float movementSpeed = 750.0f; // Adjust this for faster/slower movement
 
 // Keyboard callback to track key presses
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
@@ -70,28 +70,32 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	}
 }
 
+
+// ball and camera movement
 void do_movement(Ball* ball)
 {
 	if (keys[GLFW_KEY_UP]) {
 		ball->isRolling = true;
 	}
-	if (keys[GLFW_KEY_DOWN]) {
-		ball->isRolling = false;
+
+	if (keys[GLFW_KEY_LEFT_SHIFT] && keys[GLFW_KEY_RIGHT] && ball->isRolling == false) {
+		ball->move(1, 0, deltaTime);
+		camera.ProcessKeyboard(RIGHT, deltaTime * movementSpeed);
 	}
-	if (keys[GLFW_KEY_LEFT]) {
+	if (keys[GLFW_KEY_LEFT_SHIFT] && keys[GLFW_KEY_LEFT] && ball->isRolling == false) {
+		ball->move(-1, 0, deltaTime);
+		camera.ProcessKeyboard(LEFT, deltaTime * movementSpeed);
+	}
+
+	if (keys[GLFW_KEY_LEFT] && !keys[GLFW_KEY_LEFT_CONTROL] && !keys[GLFW_KEY_LEFT_SHIFT] && ball->isRolling == false) {
 		ball->move(-1, 0, deltaTime);
 	}
-	if (keys[GLFW_KEY_RIGHT]) {
+	if (keys[GLFW_KEY_RIGHT] && !keys[GLFW_KEY_LEFT_CONTROL] && !keys[GLFW_KEY_LEFT_SHIFT] && ball->isRolling == false) {
 		ball->move(1, 0, deltaTime);
 	}
-	// Camera movement
-	if (keys[GLFW_KEY_UP])
-		camera.ProcessKeyboard(FORWARD, deltaTime * movementSpeed);
-	if (keys[GLFW_KEY_DOWN])
-		camera.ProcessKeyboard(BACKWARD, deltaTime * movementSpeed);
-	if (keys[GLFW_KEY_LEFT])
+	if (keys[GLFW_KEY_LEFT_CONTROL] && keys[GLFW_KEY_LEFT] /*&& ball->isRolling == false*/)
 		camera.ProcessKeyboard(LEFT, deltaTime * movementSpeed);
-	if (keys[GLFW_KEY_RIGHT])
+	if (keys[GLFW_KEY_LEFT_CONTROL] && keys[GLFW_KEY_RIGHT] /*&& ball->isRolling == false*/)
 		camera.ProcessKeyboard(RIGHT, deltaTime * movementSpeed);
 }
 
@@ -99,8 +103,15 @@ bool firstMouse = true;
 float lastX = sWidth / 2.0f;
 float lastY = sHeight / 2.0f;
 
+//camera view callback
 void camera_view_callback(GLFWwindow* window, double xpos, double ypos)
 {
+
+	if (!isRightMouseDown)
+	{
+		return;
+	}
+
 	if (firstMouse)
 	{
 		lastX = xpos;
@@ -113,8 +124,28 @@ void camera_view_callback(GLFWwindow* window, double xpos, double ypos)
 
 	lastX = xpos;
 	lastY = ypos;
+
+	float sensitivity = 0.2f;
+
+	xoffset *= sensitivity;
+	yoffset *= sensitivity;
+
 	camera.ProcessMouseMovement(xoffset, yoffset);
 };
+
+// Right click to allow camera movement
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
+	{
+		isRightMouseDown = true;
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	}
+	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE){
+		isRightMouseDown = false;
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	}
+}
 
 void init() {
 	// Initialize the resources - set window, etc.
@@ -173,8 +204,10 @@ int main(int argc, char* argv[])
 	glm::vec3 cameraOffset = camera.Position - ballPosition;
 	//Camera movement via mouse callback set
 	glfwSetCursorPosCallback(window, camera_view_callback);
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetMouseButtonCallback(window, mouse_button_callback);
+	glfwSetMouseButtonCallback(window, mouse_button_callback);
 	glfwSetKeyCallback(window, key_callback);
+	
 
 	// Setup and compile shaders
 	Shader skyboxShader("skyboxVertexShader.glsl", "skyboxFragmentShader.glsl");
