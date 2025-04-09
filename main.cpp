@@ -331,6 +331,7 @@ int main(int argc, char* argv[])
 	sf::Music music;
 	music.openFromFile("music.ogg");
 
+	music.setLoop(true);
 	music.setVolume(60.0f);
 
 	music.play();
