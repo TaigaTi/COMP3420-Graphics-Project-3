@@ -61,13 +61,8 @@ GLuint loadCubeMap(vector<std::string>);
 // Camera
 Camera camera(glm::vec3(0.0f, 1000.0f, 1500.0f)); 
 
-// Ball Properties
-const float BALL_SCALE = 25.0f;
-const float BALL_BASE_SPEED = 29.0f;
-bool isRolling = false;
-glm::vec3 ballPosition = glm::vec3(0.0f, 0.0f, 200.0f);
-bool isRightMouseDown = false;
 // Movement Flags and Speed
+bool isRightMouseDown = false;
 bool keys[1024];
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
@@ -219,8 +214,9 @@ int main(int argc, char* argv[])
 	// Initialize resources
 	init();
 
+	Ball ball = Ball();
 
-	glm::vec3 cameraOffset = camera.Position - ballPosition;
+	glm::vec3 cameraOffset = camera.Position - ball.position;
 	//Camera movement via mouse callback set
 	glfwSetCursorPosCallback(window, camera_view_callback);
 	glfwSetMouseButtonCallback(window, mouse_button_callback);
@@ -235,8 +231,6 @@ int main(int argc, char* argv[])
 
 	// Load the platform model object
 	Model platform((GLchar*)"platform.obj");
-
-	Ball ball = Ball();
 
 	Pins pins = Pins();
 
