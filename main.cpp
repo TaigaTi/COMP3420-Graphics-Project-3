@@ -49,8 +49,9 @@
 
 using namespace std;
 
-void processInput(GLFWwindow* window);
+void processInput(GLFWwindow*);
 bool checkForCollisions(Ball*, Pins*);
+void renderAllText(TextWriter);
 
 // Display Window
 GLFWwindow* window;
@@ -493,8 +494,7 @@ int main(int argc, char* argv[])
 		}
 
 		// Draw text
-		textWriter.drawText("Score: " + std::to_string(score), glm::vec2(10.0f, 10.0f));
-		textWriter.drawText("Current Volume: " + std::to_string((int)musicVolume), glm::vec2(10.0, sHeight - 30.0f), 0.5);
+		renderAllText(textWriter);
 
 		// Reset the depth function back to its default
 		glDepthFunc(GL_LESS);
@@ -577,4 +577,40 @@ bool checkForCollisions(Ball* ball, Pins* pins) {
 	}
 
 	return collisionOccurred;
+}
+
+void renderAllText(TextWriter textWriter) {
+
+	// Options
+	textWriter.drawText("Score: " + std::to_string(score), glm::vec2(10.0, sHeight - 40.0f));
+	textWriter.drawText("Current Volume: " + std::to_string((int)musicVolume), glm::vec2(10.0f, 10.0f), 0.5);
+
+	// Do instructions
+	float offset;
+
+	offset = 0.01f;
+	std::string instructions[] = {
+		"Use left and right arrow keys to move the ball.",
+		"Use Up arrow to BOWL!",
+		"Left Ctrl and left and right arrow keys moves the camera only.",
+		"Using Shift and Arrow keys moves both the ball and camera together.",
+		"You can use right click to look around.",
+		"Just be careful when moving camera after looking around!",
+		"Use ctrl and + and - to raise and lower the volume.",
+		"Have fun!"
+	};
+
+	for (std::string instruction : instructions) {
+		textWriter.drawText(instruction, glm::vec2(sWidth * 0.76, sHeight * (0.98 - offset)), 0.3f);
+		offset += 0.02f;
+	}
+
+	// Do Credits
+
+	std::string names[] = { "Tarika Birch", "Isaiah Carrington", "Janae Fitzgerald", "Kiara Fredrick", "Jonathan King" };
+	offset = 0.01f;
+	for (std::string name : names) {
+		textWriter.drawText(name, glm::vec2(sWidth * 0.92, sHeight * (0.1 - offset) ), 0.4f);
+		offset += 0.02f;
+	}
 }
