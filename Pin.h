@@ -26,6 +26,7 @@ public:
 	bool isLaunched = false;                    // Whether the pin has been hit/launched
 	bool awaitingReset = false;					// Whether the pin is waiting to be reset
 	float resetDelaySeconds = 2.0f;				// Delay in seconds before the pin resets
+	bool canCollide = true;						// Whether or not the ball can go BONK
 
 	std::chrono::high_resolution_clock::time_point fallEndTime; // Time when the pin falls
 
@@ -145,6 +146,7 @@ public:
 		this->velocity = glm::vec3(0.0f);
 		this->isLaunched = false;
 		this->hasFallen = false;
+		this->canCollide = true;
 	}
 
 	// Pass projection matrix to the shader

@@ -62,12 +62,18 @@ GLuint loadCubeMap(vector<std::string>);
 // Camera
 Camera camera(glm::vec3(0.0f, 1000.0f, 1500.0f)); 
 
+// SCORE!
+
+GLuint score = 0;
+
 // Movement Flags and Speed
 bool isRightMouseDown = false;
 bool keys[1024];
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 float movementSpeed = 750.0f; // Adjust this for faster/slower movement
+
+// 
 
 // Keyboard callback to track key presses
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
@@ -436,7 +442,9 @@ int main(int argc, char* argv[])
 		//  Check for collisions
 		// =======================================================================
 		checkForCollisions(&ball, &pins);
-		ball.boundsCheck(boundary);
+		if (ball.boundsCheck(boundary)) {
+			score = 0;
+		}
 
 		// Reset the pins
 		pins.fall(deltaTime);
@@ -467,8 +475,7 @@ int main(int argc, char* argv[])
 		glBindVertexArray(0);
 
 		// Draw text
-		textWriter.drawText("Hello World!", glm::vec2(10.0f, 10.0f));
-
+		textWriter.drawText("Score: " + std::to_string(score), glm::vec2(10.0f, 10.0f));
 
 		// Reset the depth function back to its default
 		glDepthFunc(GL_LESS);
@@ -542,6 +549,11 @@ bool checkForCollisions(Ball* ball, Pins* pins) {
 			// Apply directional fall
 			pin.launch(direction);
 			collisionOccurred = true;
+
+			if (pin.canCollide) {
+				score += 1;
+				pin.canCollide = false;
+			}
 		}
 	}
 
