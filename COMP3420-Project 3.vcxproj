@@ -140,6 +140,7 @@
     <ClInclude Include="ball.h" />
     <ClInclude Include="boundary.h" />
     <ClInclude Include="camera.h" />
+    <ClInclude Include="text_writer.h" />
     <ClInclude Include="mesh.h" />
     <ClInclude Include="model.h" />
     <ClInclude Include="Pin.h" />
@@ -158,6 +159,8 @@
     <Import Project="packages\sfml-system.redist.2.4.2.0\build\native\sfml-system.redist.targets" Condition="Exists('packages\sfml-system.redist.2.4.2.0\build\native\sfml-system.redist.targets')" />
     <Import Project="packages\sfml-system.2.4.2.0\build\native\sfml-system.targets" Condition="Exists('packages\sfml-system.2.4.2.0\build\native\sfml-system.targets')" />
     <Import Project="packages\sfml-audio.2.4.2.0\build\native\sfml-audio.targets" Condition="Exists('packages\sfml-audio.2.4.2.0\build\native\sfml-audio.targets')" />
+    <Import Project="packages\freetype.redist.2.8.0.1\build\native\freetype.redist.targets" Condition="Exists('packages\freetype.redist.2.8.0.1\build\native\freetype.redist.targets')" />
+    <Import Project="packages\freetype.2.8.0.1\build\native\freetype.targets" Condition="Exists('packages\freetype.2.8.0.1\build\native\freetype.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -174,5 +177,7 @@
     <Error Condition="!Exists('packages\sfml-system.redist.2.4.2.0\build\native\sfml-system.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\sfml-system.redist.2.4.2.0\build\native\sfml-system.redist.targets'))" />
     <Error Condition="!Exists('packages\sfml-system.2.4.2.0\build\native\sfml-system.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\sfml-system.2.4.2.0\build\native\sfml-system.targets'))" />
     <Error Condition="!Exists('packages\sfml-audio.2.4.2.0\build\native\sfml-audio.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\sfml-audio.2.4.2.0\build\native\sfml-audio.targets'))" />
+    <Error Condition="!Exists('packages\freetype.redist.2.8.0.1\build\native\freetype.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\freetype.redist.2.8.0.1\build\native\freetype.redist.targets'))" />
+    <Error Condition="!Exists('packages\freetype.2.8.0.1\build\native\freetype.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\freetype.2.8.0.1\build\native\freetype.targets'))" />
   </Target>
 </Project>

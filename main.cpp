@@ -44,6 +44,7 @@
 #include "pins.h"
 #include "boundary.h"
 #include "sound.h"
+#include "text_writer.h"
 
 using namespace std;
 
@@ -202,11 +203,18 @@ void init() {
 		exit(EXIT_FAILURE);
 	}
 
+	// OpenGL state
+	// ------------
+	glEnable(GL_CULL_FACE);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	// Depth Test
 	glEnable(GL_DEPTH_TEST);
 
 	// Set viewport size
 	glViewport(0, 0, sWidth, sHeight);
+
 }
 
 int main(int argc, char* argv[])
@@ -215,6 +223,9 @@ int main(int argc, char* argv[])
 	init();
 
 	Ball ball = Ball();
+	// Text Writer!
+
+	TextWriter textWriter = TextWriter();
 
 	glm::vec3 cameraOffset = camera.Position - ball.position;
 	//Camera movement via mouse callback set
@@ -326,7 +337,7 @@ int main(int argc, char* argv[])
 	music.openFromFile("music.ogg");
 
 	music.setLoop(true);
-	music.setVolume(60.0f);
+	music.setVolume(0.0f);
 
 	music.play();
 
