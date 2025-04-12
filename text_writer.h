@@ -38,15 +38,13 @@ public:
 
 	TextWriter()
     {
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         setupShader();
         setupFreeType();
 		setupTextures();
         setupBuffers();
 	}
 
-    void drawText(std::string text, glm::vec2 position, float scale, glm::vec3 color) {
+    void drawText(std::string text, glm::vec2 position, float scale=1.0f, glm::vec3 color=glm::vec3(1.0f)) {
         shader.Use();
         glUniform3f(glGetUniformLocation(shader.Program, "textColor"), color.x, color.y, color.z);
         glActiveTexture(GL_TEXTURE0);

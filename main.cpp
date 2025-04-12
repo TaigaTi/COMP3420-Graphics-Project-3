@@ -358,7 +358,6 @@ int main(int argc, char* argv[])
 	// Keep displaying the window until we have shut it down
 	while (!glfwWindowShouldClose(window))
 	{
-
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
@@ -466,6 +465,10 @@ int main(int argc, char* argv[])
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		glBindVertexArray(0);
+
+		// Draw text
+		textWriter.drawText("Hello World!", glm::vec2(10.0f, 10.0f));
+
 
 		// Reset the depth function back to its default
 		glDepthFunc(GL_LESS);
