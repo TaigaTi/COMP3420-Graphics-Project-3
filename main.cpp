@@ -35,6 +35,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <SFML/Audio.hpp>
+#include <algorithm>
 
 #include "camera.h"
 #include "shader.h"
@@ -73,7 +74,10 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 float movementSpeed = 750.0f; // Adjust this for faster/slower movement
 
-// 
+// Music Volume
+
+float musicVolume = 50.0f;
+bool musicCanChange = true;
 
 // Keyboard callback to track key presses
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
@@ -118,6 +122,13 @@ void do_movement(Ball* ball)
 		camera.ProcessKeyboard(LEFT, deltaTime * movementSpeed);
 	if (keys[GLFW_KEY_LEFT_CONTROL] && keys[GLFW_KEY_RIGHT] /*&& ball->isRolling == false*/)
 		camera.ProcessKeyboard(RIGHT, deltaTime * movementSpeed);
+
+	if (keys[GLFW_KEY_LEFT_CONTROL] && keys[GLFW_KEY_MINUS])
+		musicVolume = std::max(0.0f, musicVolume - (20.0f * deltaTime));
+		musicCanChange = false;
+	if (keys[GLFW_KEY_LEFT_CONTROL] && keys[GLFW_KEY_EQUAL])
+		musicVolume = std::min(100.0f, musicVolume + (20.0f * deltaTime));
+		musicCanChange = false;
 }
 
 bool firstMouse = true;
@@ -343,7 +354,7 @@ int main(int argc, char* argv[])
 	music.openFromFile("music.ogg");
 
 	music.setLoop(true);
-	music.setVolume(0.0f);
+	music.setVolume(musicVolume);
 
 	music.play();
 
@@ -474,8 +485,16 @@ int main(int argc, char* argv[])
 
 		glBindVertexArray(0);
 
+		// Optional Volume Updates:
+
+		if (musicVolume != music.getVolume()) {
+			music.setVolume(musicVolume);
+			musicCanChange = true;
+		}
+
 		// Draw text
 		textWriter.drawText("Score: " + std::to_string(score), glm::vec2(10.0f, 10.0f));
+		textWriter.drawText("Current Volume: " + std::to_string((int)musicVolume), glm::vec2(10.0, sHeight - 30.0f), 0.5);
 
 		// Reset the depth function back to its default
 		glDepthFunc(GL_LESS);
