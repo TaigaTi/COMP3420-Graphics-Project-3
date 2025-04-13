@@ -12,7 +12,7 @@
 - **Pin Object:** Trevor Powers (TurboSquid) - https://www.turbosquid.com/3d-models/bowling-pins-c4d-free/1114818
 - **Platform Textures:** Tarika Birch
 - **Skybox Textures:** Tarika Birch
-- **Ball Texture:**
+- **Ball Texture:** Pramote Lertnitivanit (Vecteezy) - https://www.vecteezy.com/vector-art/3127954-abstract-template-blue-background-white-squares
 - **Platform Object:** Isaiah Carrington
 - **Ball Object:** Isaiah Carrington
 
