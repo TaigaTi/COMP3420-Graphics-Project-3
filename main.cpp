@@ -24,6 +24,13 @@
 	- Install-Package Soil
 	- Install-Package Assimp -version 3.0.0
 
+	Controls
+	Move Ball: Left and Right Arrows
+	Move Camera: CTRL & Left and CTRL & Right
+	Move Camera & Ball:  SHIFT & Left and SHIFT & Right
+	Look Around:  Right Click & Drag
+	Music Volume: CTRL & + or CTRL & -
+
 =================================================================================*/
 
 
